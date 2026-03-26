@@ -16,6 +16,8 @@ The guardrail framework consists of:
 
 ## Pattern 2.1 — Skill Overlay Architecture
 
+![Skill Overlay Architecture](diagrams/2.1-skill-overlay-architecture.png)
+
 ### Problem
 
 Claude Code provides base capabilities through superpowers like `brainstorming` and `test-driven-development`. However, production projects need project-specific constraints layered on top of these generic capabilities. Writing all constraints inline in prompts is verbose and inconsistent.
@@ -65,6 +67,8 @@ Copying the same rules into every prompt. This creates drift—prompts get updat
 ---
 
 ## Pattern 2.2 — The Skill Chain
+
+![Skill Chain Pipeline](diagrams/2.2-skill-chain-pipeline.png)
 
 ### Problem
 

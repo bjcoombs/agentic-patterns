@@ -16,6 +16,8 @@ The core insight: **not all tool calls are created equal**. A raw `grep` returns
 
 ## Pattern 3.1 — Smart Routing / Tool Selection
 
+![Smart Routing Flow](diagrams/3.1-smart-routing-flow.png)
+
 ### Problem
 
 Agents often use inefficient tools for common operations. A raw bash `grep` across a codebase returns megabytes of unstructured text. The agent then wastes tokens parsing line numbers, extracting context, and filtering noise.
@@ -223,6 +225,8 @@ function routeGrep(env: Environment) {
 ---
 
 ## Pattern 3.4 — Context Engineering — The Scout Pattern
+
+![Scout/Implementer Pattern](diagrams/3.4-scout-implementer-pattern.png)
 
 ### Problem
 

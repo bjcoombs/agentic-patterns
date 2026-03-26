@@ -24,6 +24,7 @@ agentic-patterns/
 │       ├── wyntrade-case-study.md
 │       └── further-reading.md
 ├── examples/                    # Working code (TS + Python)
+├── docs/diagrams/               # Excalidraw diagrams for L1-L4
 ├── docs/specs/                  # Design specifications
 └── docs/plans/                  # Implementation plans
 ```

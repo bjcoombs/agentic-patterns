@@ -252,6 +252,8 @@ Cleanup:
 
 ## Pattern 4.4 — Spec Drift Detection
 
+![Spec Drift Detection Layers](diagrams/4.4-spec-drift-detection-layers.png)
+
 ### Problem
 
 Documentation, tests, and code drift apart over time. A pattern documented in L1 may be renamed in the code. A test may reference a function that was deleted. Documentation may describe behavior that changed months ago. This drift creates confusion and wastes tokens as agents chase outdated specifications.

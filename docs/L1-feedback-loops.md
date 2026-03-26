@@ -45,6 +45,8 @@ tests/stack/
 
 Run sequentially, each test building confidence in layers. If `01-app-startup` fails, the agent knows immediately: don't waste time debugging order processing logic — the foundation is broken.
 
+![Stack Test Architecture](diagrams/1.1-stack-test-architecture.png)
+
 ### Comparison: Test Types
 
 | Dimension | Unit Tests | Integration Tests | Stack Tests | E2E Tests |
@@ -88,6 +90,8 @@ The key insight: stack-first development is an architectural decision, not just 
 ---
 
 ## Pattern 1.2 — Full-Loop Assertion Layering
+
+![Full-Loop Assertion Layering](diagrams/1.2-full-loop-assertion-layering.png)
 
 ### Problem
 
@@ -153,6 +157,8 @@ Each failure mode points the agent to a specific subsystem to investigate.
 
 ## Pattern 1.3 — Sequential / Additive Test Design
 
+![Sequential Test Ladder](diagrams/1.3-sequential-test-ladder.png)
+
 ### Problem
 
 Tests often run in unpredictable order, making failures hard to diagnose. If a complex order processing test fails, is the bug in checkout logic, authentication, or the fact that the server never started? Unordered tests waste time — agents debug symptoms instead of root causes.
@@ -206,6 +212,8 @@ Example: If `04-checkout-basic.stack.test.ts` fails:
 ---
 
 ## Pattern 1.4 — Container Isolation
+
+![Container Isolation](diagrams/1.4-container-isolation.png)
 
 ### Problem
 
