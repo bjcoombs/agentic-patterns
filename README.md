@@ -64,7 +64,6 @@ Patterns are organized into five levels, each building on the previous. Adopt th
 docs/               # Pattern documentation (L0-L4) and guides
 examples/           # Working code examples (TypeScript + Python)
   stack-test/       # Minimal stack test setups in both languages
-  skills/           # Skill overlay templates
   guardrails/       # Token optimization middleware example
   project-structure/ # Before/after directory layouts
 docs/cross-cutting/ # Anti-patterns, migration guide, glossary

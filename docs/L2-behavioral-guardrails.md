@@ -63,8 +63,6 @@ Copying the same rules into every prompt. This creates drift—prompts get updat
 ### Cross-References
 
 - @L0-foundation.md#pattern-04-claude-md-as-project-constitution — CLAUDE.md as rule source
-- @docs/examples/skills/SKILL-TEMPLATE.md — Skill template format
-- @docs/examples/skills/example-tdd-skill.md — Concrete TDD skill example
 
 ---
 

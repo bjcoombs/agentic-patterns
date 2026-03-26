@@ -1,6 +1,6 @@
 # Guardrail Middleware Example
 
-A simplified implementation of the damage-control-guardrails middleware pattern, demonstrating smart routing and intent classification for token-optimized agent behavior.
+A simplified implementation demonstrating smart routing and intent classification for token-optimized agent behavior.
 
 ## Overview
 
@@ -13,43 +13,7 @@ This example shows the core routing logic:
 
 ## Architecture
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                     Agent Issues Command                     │
-└────────────────────────┬────────────────────────────────────┘
-                         │
-                         ▼
-┌─────────────────────────────────────────────────────────────┐
-│  Intent Classifier (intent.ts)                              │
-│  - Parses command string                                    │
-│  - Detects intent: file_read, text_search, file_modify, etc │
-│  - Handles compound commands (&&, ||, ;, |)                │
-└────────────────────────┬────────────────────────────────────┘
-                         │
-                         ▼
-┌─────────────────────────────────────────────────────────────┐
-│  Environment Detector (environment.ts)                      │
-│  - Checks RTK availability (`which rtk`)                    │
-│  - Checks jcodemunch index (`.jcodemunch/` dir)             │
-│  - Caches results for 30 minutes                            │
-└────────────────────────┬────────────────────────────────────┘
-                         │
-                         ▼
-┌─────────────────────────────────────────────────────────────┐
-│  Router (router.ts) + Config (routing.config.ts)            │
-│  - Matches intent + environment to routing rules            │
-│  - Returns resolution: allow / advise / block               │
-│  - Estimates token savings                                  │
-└────────────────────────┬────────────────────────────────────┘
-                         │
-                         ▼
-┌─────────────────────────────────────────────────────────────┐
-│  Resolution                                                 │
-│  - allow: Execute original command                          │
-│  - advise: Use suggested tool instead (e.g., Grep tool)     │
-│  - block: Stop dangerous operation (e.g., sed -i)           │
-└─────────────────────────────────────────────────────────────┘
-```
+![Guardrail Middleware Architecture](../../../docs/diagrams/guardrail-middleware-architecture.png)
 
 ## File Structure
 
@@ -185,6 +149,5 @@ Based on real-world usage:
 ## Further Reading
 
 - [L3 Optimization Documentation](../../../docs/L3-optimization.md)
-- [Damage Control Guardrails](https://github.com/anthropics/damage-control-guardrails)
 - [RTK](https://github.com/rtk-ai/rtk) — Token-optimized CLI proxy
 - [jcodemunch](https://github.com/jeromedecock/jcodemunch) — Codebase indexing

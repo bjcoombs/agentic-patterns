@@ -407,12 +407,3 @@ Evidence-based claims (L4) catch violations of constitutional rules (L0). Docume
 
 6. **All levels integrate** — L0 constitutional rules enable L1 stack tests, which provide targets for L2 skills, which L4 culture maintains.
 
----
-
-## Further Reading
-
-- **CLAUDE.md:** Project constitution and skills reference
-- **docs/README.md:** Documentation hub with coverage tracking
-- **docs/08-testing/:** Testing methodology guides
-- **tests/config/stack-utils.js:** Stack test infrastructure (236KB)
-- **.claude/skills/:** 8 skill overlays enforcing behavioral guardrails

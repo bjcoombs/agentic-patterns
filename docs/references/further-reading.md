@@ -1,14 +1,5 @@
 # Further Reading
 
-## Books
-
-### A Philosophy of Software Design
-- **Type:** Book
-- **Author:** John Ousterhout
-- **Summary:** Explores deep modules concept and interface design principles, focusing on how to create software that is easier to understand and maintain.
-- **Related to:** L0
-- **ISBN:** 978-1732102204
-
 ## Articles
 
 ### Your codebase is NOT ready for AI (here's how to fix it)
@@ -76,6 +67,7 @@
 - **Creator:** Community
 - **Summary:** CLI proxy that optimizes shell commands for token usage, providing 60-90% savings on development operations through intelligent command filtering.
 - **Related to:** L3
+- **URL:** https://github.com/rtk-ai/rtk
 
 ### Claude Code (Anthropic)
 - **Type:** Tool
