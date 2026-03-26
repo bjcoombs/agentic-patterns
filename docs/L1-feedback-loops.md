@@ -50,10 +50,10 @@ Run sequentially, each test building confidence in layers. If `01-app-startup` f
 | Dimension | Unit Tests | Integration Tests | Stack Tests | E2E Tests |
 |-----------|------------|-------------------|-------------|-----------|
 | Scope | Single function/class | Multiple components, partial stack | Full system (all services) | Full system + external deps |
-| Speed | Milliseconds | Seconds | Seconds to ~1 minute | Minutes |
+| Speed | Milliseconds | Seconds | Seconds to minutes | Minutes |
 | Isolation | Complete (in-memory) | Partial (shared fixtures) | Complete (per-test containers) | Usually shared environments |
 | Confidence Level | Low (implementation detail) | Medium (partial system) | High (production-like) | High (but flaky) |
-| Mock Policy | Everything | Some components | Zero mocks for owned services | Zero mocks |
+| Mock Policy | Everything | Some components | Zero mocks for owned services, real test service dependencies | Zero mocks |
 | Failure Diagnosticity | Low (false positives from mocks) | Medium (mock mismatches) | High (real failures) | Low (timing, flakiness) |
 | Typical Use | Algorithm correctness | Component interaction | System behavior, user journeys | Critical paths, smoke tests |
 
