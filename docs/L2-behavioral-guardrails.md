@@ -44,9 +44,9 @@ Skills are the mechanism by which a project's constitution (@L0-foundation.md#pa
 
 ### In Practice
 
-A TDD skill for a trading project might extend `superpowers:test-driven-development` and add:
+A TDD skill for an ecommerce project might extend `superpowers:test-driven-development` and add:
 - No mocking database drivers (constitutional rule)
-- No mocking blockchain libraries (constitutional rule)
+- No mocking payment processor libraries (Stripe, PayPal) (constitutional rule)
 - Full-loop assertion requirements (project convention)
 - Hook to track test file changes (integration with workflow)
 
@@ -211,10 +211,10 @@ Projects have rules that should never be violated—core constraints that define
 
 Constitutional rules are hard constraints declared in CLAUDE.md that never relax. They are the foundation of the project's guardrail system.
 
-**Example constitutional rules from a production trading system:**
+**Example constitutional rules from a production ecommerce platform:**
 
-- **Never mock core system components** — logger, blockchain libraries, database drivers, HTTP clients for first-party services. Use real components in stack tests.
-- **Full accounting for every state change** — every balance change, every trade, every fee must be logged and queryable.
+- **Never mock core system components** — logger, payment processor libraries (Stripe, PayPal), database drivers, HTTP clients for first-party services. Use real components in stack tests.
+- **Full accounting for every state change** — every inventory change, every order, every transaction fee must be logged and queryable.
 - **Evidence-based claims only** — show command output before claiming done. "Tests pass" is not evidence; show the test output.
 - **Docker-first development** — no local OS execution. Everything runs in containers.
 - **No conditional test assertions** — tests must be able to fail. (@L1-feedback-loops.md#pattern-16-test-integrity-rules)
@@ -271,11 +271,11 @@ Agents process feedback systematically. When output contains errors, agents must
 
 A test run produces output:
 ```
-FAIL test/trading/swap.test.ts
-  Trade execution
-    + should execute swap
-PASS test/trading/swap.test.ts
-  Trade execution
+FAIL test/ecommerce/order.test.ts
+  Order processing
+    + should process order
+PASS test/ecommerce/order.test.ts
+  Order processing
     + should calculate fees
 
 Error: Cannot find module './utils/config.ts'
@@ -284,12 +284,12 @@ Error: Cannot find module './utils/config.ts'
 Zero-defect response:
 1. Fix the missing module import first
 2. Re-run tests
-3. If the swap test still fails, investigate that
+3. If the order processing test still fails, investigate that
 4. Only when ALL errors and warnings are resolved is the task complete
 
 Not zero-defect (wrong approach):
-1. "The module error is unrelated to the swap test"
-2. Focus only on the swap test failure
+1. "The module error is unrelated to the order test"
+2. Focus only on the order test failure
 3. Leave the module error unfixed
 
 ### Anti-Pattern
