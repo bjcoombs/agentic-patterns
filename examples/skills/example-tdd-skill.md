@@ -38,7 +38,7 @@ Activate this skill when:
 - `track-test-edits`: When test files are edited, remove corresponding source files from `pending-tests.json`
 
 **PreToolUse hooks:**
-- `block-mock-imports`: Block attempts to import mock modules for database, HTTP, or blockchain clients
+- `block-mock-imports`: Block attempts to import mock modules for database, HTTP, or payment processor clients
 - `require-test-before-implementation`: When pending tests exist for a file, block implementation edits until test is written
 
 ## Integration Points
@@ -70,25 +70,25 @@ When implementing with this skill:
 ## Test File Conventions
 
 ```typescript
-// test/integration/trading/swap.test.ts
-describe('Swap execution', () => {
-  it('should execute swap and update balances', async () => {
+// test/integration/orders/checkout.test.ts
+describe('Order checkout', () => {
+  it('should process order and update inventory', async () => {
     // Arrange: Setup test state
-    // Act: Execute the swap
+    // Act: Execute the checkout
     // Assert: Primary assertion
     expect(result.status).toBe('success');
 
     // Assert: Second-order (database state)
-    const fromBalance = await getBalance(fromWallet);
-    expect(fromBalance).toBe(initialFrom - amount);
+    const productInventory = await getInventory(productId);
+    expect(productInventory.quantity).toBe(initialQuantity - orderQuantity);
 
     // Assert: Third-order (audit log)
-    const auditLog = await getAuditLog(swapId);
+    const auditLog = await getAuditLog(orderId);
     expect(auditLog).toMatchObject({
-      type: 'SWAP_EXECUTED',
-      from: fromWallet,
-      to: toWallet,
-      amount: amount
+      type: 'ORDER_PROCESSED',
+      customerId: customerId,
+      productId: productId,
+      quantity: orderQuantity
     });
   });
 });

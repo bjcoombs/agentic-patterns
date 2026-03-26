@@ -56,7 +56,7 @@ A blank skill template with annotated sections. Copy this file to create new ski
 
 ### example-tdd-skill.md
 
-A concrete TDD skill for a hypothetical Node.js trading project. Demonstrates:
+A concrete TDD skill for a hypothetical Node.js ecommerce project. Demonstrates:
 - Extending `superpowers:test-driven-development`
 - Constitutional rules (no mocking database, no mocking HTTP clients)
 - Hook declarations (track source edits, block mock imports)

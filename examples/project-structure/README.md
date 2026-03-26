@@ -9,36 +9,36 @@ This directory demonstrates the difference between shallow/bad organization and 
 ### Before — Shallow, Technical Layering
 
 ```
-trading-app/
+ecommerce-app/
 ├── src/
 │   ├── services/
-│   │   ├── tradingService.ts
-│   │   ├── bridgeService.ts
-│   │   ├── oracleService.ts
+│   │   ├── orderService.ts
+│   │   ├── inventoryService.ts
+│   │   ├── pricingService.ts
 │   │   └── monitoringService.ts
 │   ├── handlers/
-│   │   ├── tradeHandler.ts
-│   │   ├── bridgeHandler.ts
+│   │   ├── checkoutHandler.ts
+│   │   ├── inventoryHandler.ts
 │   │   └── monitoringHandler.ts
 │   ├── utils/
-│   │   ├── gasCalculator.ts
-│   │   ├── slippageCalculator.ts
+│   │   ├── taxCalculator.ts
+│   │   ├── discountCalculator.ts
 │   │   ├── priceFormatter.ts
 │   │   ├── addressParser.ts
-│   │   └── chainIdParser.ts
+│   │   └── currencyParser.ts
 │   ├── types/
-│   │   ├── trading.ts
-│   │   ├── bridging.ts
-│   │   ├── oracle.ts
+│   │   ├── orders.ts
+│   │   ├── inventory.ts
+│   │   ├── pricing.ts
 │   │   └── monitoring.ts
 │   ├── config/
 │   │   ├── app.config.ts
-│   │   └── chains.config.ts
+│   │   └── stores.config.ts
 │   └── index.ts
 ├── tests/
 │   ├── unit/
-│   │   ├── trading.test.ts
-│   │   └── bridging.test.ts
+│   │   ├── orders.test.ts
+│   │   └── inventory.test.ts
 │   └── integration/
 │       └── e2e.test.ts
 ├── package.json
@@ -47,7 +47,7 @@ trading-app/
 
 **Problems**:
 - Related code scattered across `services/`, `handlers/`, `utils/`, `types/`
-- Can't find all trading logic in one place
+- Can't find all order processing logic in one place
 - File paths don't indicate domain
 - 18 files at top level of `src/` — cognitive overload
 
@@ -56,22 +56,22 @@ trading-app/
 ### After — Deep, Conceptual Organization
 
 ```
-trading-app/
+ecommerce-app/
 ├── src/
-│   ├── trading/
+│   ├── orders/
 │   │   ├── index.ts                 # Public facade (3-5 exports)
-│   │   ├── execute.ts
-│   │   ├── monitor.ts
+│   │   ├── checkout.ts
+│   │   ├── fulfillment.ts
 │   │   ├── types.ts
 │   │   └── utils/
-│   │       ├── gas.ts
-│   │       └── slippage.ts
-│   ├── bridging/
+│   │       ├── tax.ts
+│   │       └── discounts.ts
+│   ├── inventory/
 │   │   ├── index.ts
-│   │   ├── wormhole.ts
-│   │   ├── layerzero.ts
+│   │   ├── warehouse.ts
+│   │   ├── supplier.ts
 │   │   └── types.ts
-│   ├── oracle/
+│   ├── pricing/
 │   │   ├── index.ts
 │   │   └── fetcher.ts
 │   ├── monitoring/
@@ -79,13 +79,13 @@ trading-app/
 │   │   └── alerts.ts
 │   ├── config/
 │   │   ├── app.ts
-│   │   └── chains.ts
+│   │   └── stores.ts
 │   └── index.ts
 ├── tests/
 │   └── stack-test/                 # Full-stack tests only
-│       ├── trading.test.ts
-│       ├── bridging.test.ts
-│       └── oracle.test.ts
+│       ├── orders.test.ts
+│       ├── inventory.test.ts
+│       └── pricing.test.ts
 ├── CLAUDE.md                        # Agent contract
 ├── README.md                        # Overview
 ├── package.json
@@ -96,7 +96,7 @@ trading-app/
 - Each domain self-contained
 - Deep modules: simple `index.ts` facades hide implementation
 - Progressive disclosure: domain → module → implementation
-- File paths signal domain: `trading/utils/gas.ts`
+- File paths signal domain: `orders/utils/tax.ts`
 
 ---
 
@@ -105,28 +105,28 @@ trading-app/
 ### Before — Shallow, Flat Structure
 
 ```
-trading_bot/
+ecommerce_bot/
 ├── bot.py
-├── trading.py
-├── bridging.py
-├── oracle.py
+├── orders.py
+├── inventory.py
+├── pricing.py
 ├── monitoring.py
-├── gas_estimator.py
-├── slippage.py
+├── tax_estimator.py
+├── discount.py
 ├── price_fetcher.py
 ├── alert_sender.py
-├── trade_executor.py
-├── bridge_router.py
-├── chain_config.py
+├── order_processor.py
+├── inventory_sync.py
+├── store_config.py
 ├── utils.py
 ├── constants.py
 ├── models.py
 ├── serializers.py
 ├── validators.py
 ├── tests/
-│   ├── test_trading.py
-│   ├── test_bridging.py
-│   ├── test_oracle.py
+│   ├── test_orders.py
+│   ├── test_inventory.py
+│   ├── test_pricing.py
 │   └── test_utils.py
 ├── requirements.txt
 └── setup.py
@@ -143,22 +143,22 @@ trading_bot/
 ### After — Deep, Domain-Based Structure
 
 ```
-trading_bot/
+ecommerce_bot/
 ├── src/
-│   ├── trading/
+│   ├── orders/
 │   │   ├── __init__.py             # Public facade
-│   │   ├── executor.py
-│   │   ├── monitor.py
+│   │   ├── processor.py
+│   │   ├── fulfillment.py
 │   │   ├── models.py
 │   │   └── utils/
-│   │       ├── gas.py
-│   │       └── slippage.py
-│   ├── bridging/
+│   │       ├── tax.py
+│   │       └── discounts.py
+│   ├── inventory/
 │   │   ├── __init__.py
-│   │   ├── router.py
-│   │   ├── wormhole.py
+│   │   ├── sync.py
+│   │   ├── warehouse.py
 │   │   └── models.py
-│   ├── oracle/
+│   ├── pricing/
 │   │   ├── __init__.py
 │   │   └── fetcher.py
 │   ├── monitoring/
@@ -166,15 +166,15 @@ trading_bot/
 │   │   └── alerts.py
 │   ├── config/
 │   │   ├── __init__.py
-│   │   └── chains.py
+│   │   └── stores.py
 │   ├── shared/
 │   │   ├── constants.py
 │   │   └── validators.py
 │   └── bot.py
 ├── tests/
 │   └── stack/                      # Full-stack tests
-│       ├── test_trading.py
-│       └── test_bridging.py
+│       ├── test_orders.py
+│       └── test_inventory.py
 ├── CLAUDE.md                        # Agent contract
 ├── README.md                        # Overview
 ├── requirements.txt
@@ -193,7 +193,7 @@ trading_bot/
 
 | Aspect | Before | After |
 |--------|--------|-------|
-| **Grouping** | Technical layer (`services/`, `utils/`) | Domain/capability (`trading/`, `bridging/`) |
+| **Grouping** | Technical layer (`services/`, `utils/`) | Domain/capability (`orders/`, `inventory/`) |
 | **Exports** | 20+ functions, leaking internals | 3-5 exports per module |
 | **Discovery** | Flat or scattered | Progressive disclosure |
 | **Navigation** | File paths meaningless | File paths signal domain |
