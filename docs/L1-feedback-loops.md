@@ -63,6 +63,20 @@ Run sequentially, each test building confidence in layers. If `01-app-startup` f
 
 **Don't** run stack tests for every code change during development. Use unit tests for rapid iteration. Run stack tests before committing or as a pre-commit hook.
 
+### Caveats and Scope
+
+Stack-first development is most achievable on **greenfield projects** designed with this approach from the start. When you control the architecture, you can ensure every component fits cleanly into a Docker stack and every service exposes an API surface that's testable from the outside.
+
+For **large, sprawling existing systems**, full adoption may not be immediately practical:
+
+- **Docker complexity limits**: Systems with dozens of microservices, specialized hardware dependencies, or complex networking may be too large to containerize as a single stack
+- **Dependency depth**: Some systems have too many interdependent services to automate into a single deterministic stack
+- **Legacy constraints**: Existing systems may have components that resist containerization (kernel modules, hardware integrations, licensed software)
+
+In these cases, the stack-test approach can still be applied **incrementally**: identify the highest-value subsystems, extract them behind clean API boundaries, and stack-test those boundaries. The goal is to expand coverage over time, not to boil the ocean on day one.
+
+The key insight: stack-first development is an architectural decision, not just a testing strategy. It shapes how you design services, define boundaries, and manage dependencies. Starting greenfield with this approach is straightforward. Retrofitting onto brownfield systems requires patience and incremental extraction — but the principles remain the same.
+
 ### Cross-References
 
 - **Pattern 1.2 (Full-Loop Assertion Layering)**: How to structure assertions within stack tests
