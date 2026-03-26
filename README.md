@@ -19,7 +19,7 @@ Traditional software engineering optimizes for human developers. **Agentic devel
 
 ## Where These Patterns Come From
 
-These patterns are extracted from a production-grade project built fully agentically with Claude Code as the primary development tool. That project developed an approach it calls **Stack-First Development**: instead of the traditional unit → integration → acceptance test cycle, it brings up the entire application stack in Docker and tests through API endpoints only. No mocks for system components. No partial-stack integration tests. Full user journeys, end to end.
+These patterns are extracted from a production-grade project built fully agentically with Claude Code as the primary development tool. That project developed an approach termed **Stack-First Development** which compresses and simplifies the traditional unit → integration → acceptance test cycle. It brings up the entire application stack in Docker and tests through API endpoints only — whether through direct interaction or a browser proxy like Playwright. Crucially, it treats the stack and the end-to-end functionality under test at a unit level, and the strict conditions for a test case passing requires the end-to-end functionality to be provably and fully functional.
 
 The patterns here generalize that approach — and the supporting practices around project structure, skills, guardrails, optimization, and documentation rigor — into a framework any team can adopt.
 
