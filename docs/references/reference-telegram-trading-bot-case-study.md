@@ -236,6 +236,28 @@ Stack tests use:
 
 The only acceptable mocks are external services without testnets — and even then, mocks are the last resort, not the default.
 
+### Trading Stack Tests — Full-Loop Verification on Chain
+
+Trading stack tests demonstrate the most rigorous end-to-end assertion pattern in the project. Each trading journey (DEX swap, limit order, DCA, bridge) verifies through five distinct verification layers — all accessed through public API endpoints or on-chain RPC calls, never by querying databases directly.
+
+**The trading verification sequence** (using DEX swap as example):
+
+1. **Primary**: POST to `/api/v1/orders` returns 201 with order ID, strategy ID, and initial status
+2. **Order completion**: `waitForOrderCompletion()` polls the order status endpoint until the strategy reaches a terminal state, with `expectedStrategyType` filtering and retry limits
+3. **On-chain verification**: `verifyTransactionOnChain()` confirms the transaction exists on the blockchain with the required number of block confirmations
+4. **Comprehensive verification**: `verifyTransactionComplete()` checks both database status ('confirmed') and blockchain receipt (blockNumber, gasUsed) in a single call
+5. **Email content verification**: `verifyDexSwapEmail()` confirms the confirmation email was sent and that its contents reflect the full trade details — token addresses, token symbols, transaction hash, strategy type, and order ID
+
+For a simple transfer, `verifyTransactionEmail()` checks chain details, recipient address, amount, and token symbol. For a limit order executing through the 4-stage pipeline (TRIGGER → OPEN → MANAGE → CLOSE), each stage transition is verified: order moves from PENDING through MONITORING, TRIGGERED, EXECUTING to FILLED, with dependent strategies (stop-loss, take-profit) created and linked via `dependsOnStrategy` relationships.
+
+The limit order test verifies across all four stages:
+- Stage 1 (TRIGGER): Order created, price data collection begins
+- Stage 2 (OPEN): Price injected to trigger threshold, DEX swap executes
+- Stage 3 (MANAGE): Dependent strategies created with correct `dependsOnStrategy` links, waiting state verified
+- Stage 4 (CLOSE): Exit strategy executes, all strategies reach 'completed' status, transaction verified on chain, confirmation email verified with full order contents
+
+Every trading test follows this pattern: create order via API → wait for completion via polling → verify on blockchain → verify in system via API → verify email notification with content matching. No layer is skipped, and each layer proves something the previous layer cannot.
+
 ---
 
 ## L2 in Practice — Behavioral Guardrails
