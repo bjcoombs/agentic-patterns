@@ -28,15 +28,23 @@ Stack tests differ from other approaches in key ways:
 
 ### In Practice
 
-A typical stack test:
+The naive approach to stack testing would be:
 
-1. Generates a unique `docker-compose.{test-name}.yml` with dynamic ports
-2. Runs `docker compose up -d` and waits for health checks
-3. Executes user journeys via HTTP API
-4. Asserts on primary responses AND second-order effects (cross-API verification, audit)
-5. Runs `docker compose down -v` to clean up everything
+1. Generate a unique `docker-compose.{test-name}.yml` with dynamic ports
+2. Run `docker compose up -d` and wait for health checks
+3. Execute user journeys via HTTP API
+4. Assert on primary responses AND second-order effects (cross-API verification, audit)
+5. Run `docker compose down -v` to clean up everything
 
-Example test structure — each test is one atomic user journey:
+However, leaving the orchestration of Docker operations to the agent is brittle and non-deterministic. Each session, the agent must re-derive compose file generation, port allocation, health check polling, container naming, volume cleanup, and authentication setup — and get every detail right. The first time there's a problem — a port collision, a stale volume, a race condition in health polling — the agent spends tokens debugging infrastructure instead of application logic.
+
+This leads to a **defining insight for closed-loop testing** (closely related to the WISC context engineering framework — [Write, Isolate, Select, Compress](../L3-optimization.md#pattern-34--context-engineering--the-scout-pattern)):
+
+**Turn brittle agent-side orchestration into deterministic tooling.** The first time trusting the agent to manually manage Docker operations causes a problem, invest in writing the tooling to fully automate that problem. Drive the agent to build a toolkit that encapsulates container lifecycle, port allocation, health check polling, authentication, and cleanup into a deterministic interface the agent invokes simply — `await stack.start()`, `await stack.cleanup()` — instead of re-deriving each operation every session.
+
+In the [reference project](references/reference-telegram-trading-bot-case-study.md), this pattern produced `StackTestUtils` (236KB, 5,888 lines) — a single class providing container lifecycle management, dynamic port allocation, authentication helpers, health check polling, database access for verification, log search for debugging, and blockchain transaction verification. The agent didn't write this in one pass. It accumulated over sessions as each brittle manual operation was automated into a reliable method. Once the toolkit existed, every subsequent agent session could run stack tests deterministically without re-deriving infrastructure logic.
+
+The test structure remains the same — each test is one atomic user journey:
 
 ```
 tests/stack/
