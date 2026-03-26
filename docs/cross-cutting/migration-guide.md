@@ -168,7 +168,7 @@ Migration Roadmap:
 
 ### Step 1: Restructure File Layout
 
-**Problem:** Layer-based organization (`services/`, `handlers/`, `utils/`, `types/`) scatters related code across directories. Agents can't find all trading logic in one place.
+**Problem:** Layer-based organization (`services/`, `handlers/`, `utils/`, `types/`) scatters related code across directories. Agents can't find all ecommerce logic in one place.
 
 **Solution:** Group by domain or capability.
 
@@ -176,35 +176,35 @@ Migration Roadmap:
 ```
 src/
 ├── services/
-│   ├── trading.ts
-│   ├── bridging.ts
+│   ├── orders.ts
+│   ├── payments.ts
 │   └── monitoring.ts
 ├── handlers/
-│   ├── tradeHandler.ts
-│   └── bridgeHandler.ts
+│   ├── orderHandler.ts
+│   └── paymentHandler.ts
 ├── utils/
-│   ├── gas.ts
-│   └── slippage.ts
+│   ├── pricing.ts
+│   └── inventory.ts
 └── types/
-    ├── trading.ts
-    └── bridging.ts
+    ├── orders.ts
+    └── payments.ts
 ```
 
 **After (domain-based):**
 ```
 src/
-├── trading/
+├── ecommerce/
 │   ├── index.ts                 # Public interface
-│   ├── execute.ts               # Implementation
-│   ├── monitor.ts               # Monitoring logic
-│   ├── types.ts                 # Domain types
-│   └── utils/                   # Trading-specific utilities
-│       ├── gas.ts
-│       └── slippage.ts
-├── bridging/
-│   ├── index.ts
-│   ├── wormhole.ts
-│   └── types.ts
+│   ├── orders/                  # Order processing
+│   │   ├── execute.ts
+│   │   ├── monitor.ts
+│   │   └── types.ts
+│   ├── payments/                # Payment processing
+│   │   ├── stripe.ts
+│   │   └── types.ts
+│   └── utils/                   # Ecommerce-specific utilities
+│       ├── pricing.ts
+│       └── inventory.ts
 └── monitoring/                  # Cross-cutting
     └── index.ts
 ```
@@ -212,15 +212,15 @@ src/
 **Migration strategy:**
 
 1. **Identify domains** (not layers): What are the capabilities of your system?
-   - Trading, bridging, authentication, payments, monitoring, etc.
+   - Orders, payments, catalog, inventory, authentication, monitoring, etc.
 
 2. **Create domain directories** for each capability
 
 3. **Move files** by domain, not by file type
-   - `services/trading.ts` → `trading/execute.ts`
-   - `handlers/tradeHandler.ts` → `trading/handler.ts`
-   - `types/trading.ts` → `trading/types.ts`
-   - `utils/gas.ts` → `trading/utils/gas.ts`
+   - `services/orders.ts` → `ecommerce/orders/execute.ts`
+   - `handlers/orderHandler.ts` → `ecommerce/orders/handler.ts`
+   - `types/orders.ts` → `ecommerce/orders/types.ts`
+   - `utils/pricing.ts` → `ecommerce/utils/pricing.ts`
 
 4. **Update imports** across the codebase
    ```bash
@@ -291,7 +291,7 @@ src/
 
 3. **Zero-defect tolerance:** Bugs found in production trigger immediate test addition. Failures are never dismissed as "unrelated."
 
-4. **Domain organization:** Code is grouped by what it does (trading/, bridging/), not by file type (services/, utils/).
+4. **Domain organization:** Code is grouped by what it does (ecommerce/orders/, ecommerce/payments/), not by file type (services/, utils/).
 
 5. **Full-loop assertions:** Tests verify primary responses, second-order effects (database state), and third-order effects (audit logs).
 
@@ -705,28 +705,27 @@ npm run test:stack
 
 **Solution:** Structure checks at three levels: primary (response), second-order (side effects), third-order (observability).
 
-**Example: Token swap test**
+**Example: Order processing test**
 
 ```typescript
-it('should execute a token swap', async () => {
+it('should process an order payment', async () => {
   // Primary: API response
-  const swapResponse = await api.post('/swap', {
-    fromToken: 'ETH',
-    toToken: 'USDC',
-    amount: '1.0'
+  const orderResponse = await api.post('/orders', {
+    items: [{ productId: 'prod-123', quantity: 2 }],
+    paymentMethod: 'stripe'
   });
-  expect(swapResponse.status).toBe(200);
-  expect(swapResponse.data.txId).toBeDefined();
+  expect(orderResponse.status).toBe(200);
+  expect(orderResponse.data.orderId).toBeDefined();
 
   // Second-order: Database state via API
-  const balances = await api.get(`/balances/${userId}`);
-  expect(balances.data.ETH).toBe('0');
-  expect(balances.data.USDC).toBeGreaterThan('0');
+  const orderStatus = await api.get(`/orders/${orderResponse.data.orderId}`);
+  expect(orderStatus.data.status).toBe('paid');
+  expect(orderStatus.data.totalAmount).toBeGreaterThan(0);
 
   // Third-order: Audit log via admin API
   const adminClient = createAdminClient();
-  const auditLog = await adminClient.get(`/audit/${swapResponse.data.txId}`);
-  expect(auditLog.data.event).toBe('TOKEN_SWAPPED');
+  const auditLog = await adminClient.get(`/audit/${orderResponse.data.orderId}`);
+  expect(auditLog.data.event).toBe('ORDER_PAID');
   expect(auditLog.data.timestamp).toBeDefined();
 });
 ```
