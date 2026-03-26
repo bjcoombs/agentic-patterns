@@ -691,8 +691,8 @@
     {
       "type": "text",
       "id": "allow_detail",
-      "x": 20, "y": 640,
-      "width": 200, "height": 18,
+      "x": 50, "y": 640,
+      "width": 140, "height": 18,
       "text": "Execute original command",
       "originalText": "Execute original command",
       "fontSize": 13,
@@ -776,8 +776,8 @@
     {
       "type": "text",
       "id": "advise_detail",
-      "x": 190, "y": 640,
-      "width": 200, "height": 18,
+      "x": 220, "y": 640,
+      "width": 140, "height": 18,
       "text": "Use suggested tool instead",
       "originalText": "Use suggested tool instead",
       "fontSize": 13,
@@ -861,8 +861,8 @@
     {
       "type": "text",
       "id": "block_detail",
-      "x": 360, "y": 640,
-      "width": 200, "height": 18,
+      "x": 390, "y": 640,
+      "width": 140, "height": 18,
       "text": "Stop dangerous operation",
       "originalText": "Stop dangerous operation",
       "fontSize": 13,
