@@ -13,7 +13,7 @@ This example shows the core routing logic:
 
 ## Architecture
 
-![Guardrail Middleware Architecture](../../../docs/diagrams/guardrail-middleware-architecture.png)
+![Guardrail Middleware Architecture](../../docs/diagrams/guardrail-middleware-architecture.png)
 
 ## File Structure
 
