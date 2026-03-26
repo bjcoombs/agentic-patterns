@@ -31,10 +31,10 @@ Apply [Pattern 0.1 — Deep Modules](../L0-foundation.md#pattern-01--deep-module
 
 Example refactor:
 ```
-Before: trading/executor.ts (2000 lines, 25 exports)
-After:  trading/execute/index.ts (3 exports)
-        trading/execute/validate.ts (internal)
-        trading/execute/monitor.ts (internal)
+Before: ecommerce/order-service.ts (2000 lines, 25 exports)
+After:  ecommerce/orders/index.ts (3 exports)
+        ecommerce/orders/validate.ts (internal)
+        ecommerce/orders/monitor.ts (internal)
 ```
 
 ---
@@ -45,7 +45,7 @@ After:  trading/execute/index.ts (3 exports)
 - 50+ files in one directory with no subdirectories
 - No grouping by domain or capability
 - Related concepts scattered across the directory
-- File names become long prefixes to fake organization (trading_auth_xxx.ts, trading_db_xxx.ts)
+- File names become long prefixes to fake organization (ecommerce_auth_xxx.ts, ecommerce_db_xxx.ts)
 
 **Why It's Harmful**
 - No progressive disclosure—agent must read every file to understand relationships
@@ -63,18 +63,18 @@ Apply [Pattern 0.2 — Progressive Disclosure](../L0-foundation.md#pattern-02--p
 Example refactor:
 ```
 Before: src/ (50 files)
-├── trading_auth.ts
-├── trading_db.ts
-├── trading_executor.ts
+├── ecommerce_auth.ts
+├── ecommerce_db.ts
+├── ecommerce_orders.ts
 ├── auth_handlers.ts
 ├── auth_middleware.ts
 ... (45 more files)
 
 After: src/
-├── trading/
+├── ecommerce/
 │   ├── index.ts
 │   ├── auth.ts
-│   └── execute.ts
+│   └── orders.ts
 ├── auth/
 │   ├── index.ts
 │   ├── handlers.ts
@@ -230,7 +230,7 @@ Before: Integration test (3 services, 2 mocked)
 └── Message queue (not started)
 
 After 1: Unit test (milliseconds)
-└── Test swap logic in isolation, no containers
+└── Test order processing logic in isolation, no containers
 
 After 2: Stack test (seconds, complete confidence)
 ├── App container (real)
@@ -381,14 +381,14 @@ Apply [Pattern 1.3 — Sequential/Additive Test Design](../L1-feedback-loops.md#
 Example workflow:
 ```bash
 # Wrong: Run single test
-npm test -- trading-basic.stack.test.ts
+npm test -- ecommerce-basic.stack.test.ts
 
 # Correct: Run full suite
 npm test -- tests/stack/
 
-# If 04-trading-basic fails:
+# If 04-ecommerce-basic fails:
 # - Agent knows: 01, 02, 03 passed (startup, auth, CRUD work)
-# - Agent focuses: Trading logic specifically
+# - Agent focuses: Ecommerce logic specifically
 # - Agent skips: 05, 06, 07 (they'd fail anyway)
 ```
 
@@ -574,14 +574,14 @@ Apply [Pattern 3.2 — Intent Classification](../L3-optimization.md#pattern-32--
 Example refactor:
 ```bash
 # Wasteful: Read entire file
-Read src/trading/execute.ts (300 lines)
+Read src/ecommerce/orders/execute.ts (300 lines)
 
 # Efficient: Read specific function
-get_symbol(symbol_id="src/trading/execute.ts:executeSwap")
+get_symbol(symbol_id="src/ecommerce/orders/execute.ts:processOrder")
 # Returns: 20 lines for just that function
 
 # Or: Get outline first
-get_file_outline(file_path="src/trading/execute.ts")
+get_file_outline(file_path="src/ecommerce/orders/execute.ts")
 # Returns: All function signatures, then choose what to read
 ```
 
