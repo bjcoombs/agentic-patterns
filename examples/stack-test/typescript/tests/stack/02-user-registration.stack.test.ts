@@ -2,17 +2,17 @@
  * 02-user-registration.stack.test.ts
  *
  * Second test in the sequential stack test suite.
- * Verifies user registration and retrieval flows.
+ * Models the atomic user journey: a new user signs up and can access their account.
  *
  * Demonstrates:
+ * - User journey framing (one complete interaction per test)
  * - Full-loop assertion layering (primary, second-order, third-order)
- * - User journey testing
  * - Database state verification via API
  */
 
 import { StackTestUtils } from '../config/stack-utils.js';
 
-describe('Stack Test: User Registration', () => {
+describe('Stack Test: User signs up and accesses their account', () => {
   let utils: StackTestUtils;
   let createdUserId: string;
 
@@ -26,7 +26,7 @@ describe('Stack Test: User Registration', () => {
     await utils.cleanup();
   }, 30000);
 
-  test('POST /users creates a new user', async () => {
+  test('journey step 1: POST /users creates a new user', async () => {
     const userData = {
       email: 'test@example.com',
       username: 'testuser',
@@ -49,7 +49,7 @@ describe('Stack Test: User Registration', () => {
     createdUserId = response.data.id;
   });
 
-  test('GET /users/:id returns the created user', async () => {
+  test('journey step 2: GET /users/:id returns the created user', async () => {
     // This test depends on the previous test — demonstrating sequential design
     expect(createdUserId).toBeDefined();
 
@@ -76,7 +76,7 @@ describe('Stack Test: User Registration', () => {
     );
   });
 
-  test('duplicate email returns 409', async () => {
+  test('journey edge case: duplicate email returns 409', async () => {
     const duplicateUser = {
       email: 'test@example.com', // Same email as first test
       username: 'different',
@@ -91,7 +91,7 @@ describe('Stack Test: User Registration', () => {
     });
   });
 
-  test('user is audited in logs', async () => {
+  test('journey step 3: user creation is audited in logs', async () => {
     // Third-order assertion: verify audit log via admin API
     const adminResponse = await utils.makeRequest('GET', '/admin/audit/users');
 
@@ -108,7 +108,7 @@ describe('Stack Test: User Registration', () => {
     );
   });
 
-  test('user data persists after container restart', async () => {
+  test('journey step 4: user data persists across requests', async () => {
     // Verify data persistence — this is a critical stack test concern
     // The transient volumes should persist until we call cleanup()
 

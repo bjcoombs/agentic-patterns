@@ -19,7 +19,9 @@ Traditional software engineering optimizes for human developers. **Agentic devel
 
 ## Where These Patterns Come From
 
-These patterns are extracted from a production-grade project built fully agentically with Claude Code as the primary development tool. That project developed an approach termed **Stack-First Development** which compresses and simplifies the traditional unit → integration → acceptance test cycle. It brings up the entire application stack in Docker and tests through API endpoints only — whether through direct interaction or a browser proxy like Playwright. Crucially, it treats the stack and the end-to-end functionality under test at a unit level, and the strict conditions for a test case passing requires the end-to-end functionality to be provably and fully functional.
+Peter Steinberger, creator of OpenClaw, has described building production software entirely with AI agents — managing 5-10 parallel agents, closing the feedback loop so agents verify their own work, investing heavily in planning before implementation, and treating code reviews as architecture discussions. His core insight: *"I don't think software engineering is dead with AI: in fact, quite the opposite."* Agentic development demands more engineering discipline, not less.
+
+These patterns extract and structure the thinking behind that approach. They come from a production-grade Telegram trading bot built fully agentically with Claude Code as the primary development tool. That project developed **Stack-First Development** — bringing up the entire application stack in Docker and testing through API endpoints only. Crucially, it treats the stack and the end-to-end functionality under test at a unit level: the strict conditions for a test case passing require the end-to-end functionality to be provably and fully functional.
 
 The patterns here generalize that approach — and the supporting practices around project structure, skills, guardrails, optimization, and documentation rigor — into a framework any team can adopt.
 
@@ -79,6 +81,6 @@ This is a living pattern library. Contributions welcome:
 
 ## Background and Further Reading
 
-- [Wyntrade Case Study](docs/references/wyntrade-case-study.md) — the production system these patterns were extracted from
+- [Reference Telegram Trading Bot Case Study](docs/references/reference-telegram-trading-bot-case-study.md) — the production system these patterns were extracted from
 - [Further Reading](docs/references/further-reading.md) — books, articles, videos, and tools that informed this work
 - [Glossary](docs/cross-cutting/glossary.md) — terminology reference

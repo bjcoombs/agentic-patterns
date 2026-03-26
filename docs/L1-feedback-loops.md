@@ -14,10 +14,13 @@ Integration tests occupy a painful middle ground: too slow for rapid iteration, 
 
 **Stack tests** run the complete Docker stack (app, databases, caches, queues) and verify behavior through the API only. No internal mocks, no backend shortcuts. The test treats the system as a black box: it spins up the stack, waits for readiness, makes API calls, and asserts on observable effects.
 
+The defining characteristic of a stack test is that it models an **atomic user journey** — a single, complete interaction from the user's perspective. Not "does the order service work?" but "a user places an order, pays, and sees their balance update." The test verifies the entire journey end-to-end, not individual components in isolation.
+
 Stack tests differ from other approaches in key ways:
 
-- **Scope**: Entire system — every service runs in real containers
+- **Scope**: Entire system — every service runs in real containers, plus external deps to the fullest possible extent
 - **Verification**: API-level only — tests interact like external clients
+- **Granularity**: One atomic user journey per test — a complete interaction from the user's perspective
 - **Isolation**: Full isolation between test runs — no shared state
 - **Mock policy**: Zero mocks for owned services — real databases, real Redis, real side-effects
 - **Failure diagnosticity**: High — failures always indicate real bugs, never test artifacts
@@ -32,16 +35,18 @@ A typical stack test:
 4. Asserts on primary responses AND second-order effects (database state, logs)
 5. Runs `docker compose down -v` to clean up everything
 
-Example test structure:
+Example test structure — each test is one atomic user journey:
 
 ```
 tests/stack/
-  01-app-startup.stack.test.ts         # Does the stack start?
-  02-authentication.stack.test.ts      # Can users log in?
-  03-basic-crud.stack.test.ts          # Core operations work
-  04-domain-operations.stack.test.ts   # Business logic
-  05-advanced-features.stack.test.ts   # Edge cases and complex flows
+  01-app-startup.stack.test.ts         # Journey: system comes online and reports healthy
+  02-authentication.stack.test.ts      # Journey: user registers, logs in, receives a token
+  03-basic-crud.stack.test.ts          # Journey: user creates, reads, updates, deletes a resource
+  04-checkout-complete.stack.test.ts   # Journey: user adds items, checks out, payment succeeds
+  05-refund-and-reconciliation.stack.test.ts  # Journey: user requests refund, balance updates
 ```
+
+The framing matters. "Does authentication work?" tests a component. "A user registers, logs in, and receives a valid token" tests a journey. Journeys catch component-interaction bugs that component tests cannot.
 
 Run sequentially, each test building confidence in layers. If `01-app-startup` fails, the agent knows immediately: don't waste time debugging order processing logic — the foundation is broken.
 
@@ -51,7 +56,7 @@ Run sequentially, each test building confidence in layers. If `01-app-startup` f
 
 | Dimension | Unit Tests | Integration Tests | Stack Tests | E2E Tests |
 |-----------|------------|-------------------|-------------|-----------|
-| Scope | Single function/class | Multiple components, partial stack | Full system (all services) | Full system + external deps |
+| Scope | Single function/class | Multiple components, partial stack | Full system + external deps (to fullest possible extent) | Full system + external deps |
 | Speed | Milliseconds | Seconds | Seconds to minutes | Minutes |
 | Isolation | Complete (in-memory) | Partial (shared fixtures) | Complete (per-test containers) | Usually shared environments |
 | Confidence Level | Low (implementation detail) | Medium (partial system) | High (production-like) | High (but flaky) |
@@ -78,6 +83,80 @@ For **large, sprawling existing systems**, full adoption may not be immediately 
 In these cases, the stack-test approach can still be applied **incrementally**: identify the highest-value subsystems, extract them behind clean API boundaries, and stack-test those boundaries. The goal is to expand coverage over time, not to boil the ocean on day one.
 
 The key insight: stack-first development is an architectural decision, not just a testing strategy. It shapes how you design services, define boundaries, and manage dependencies. Starting greenfield with this approach is straightforward. Retrofitting onto brownfield systems requires patience and incremental extraction — but the principles remain the same.
+
+### Health Endpoint Test Mode
+
+The startup test needs to verify more than "is the server running?" A production system depends on external services — email relays, message queues, secrets managers, blockchain nodes — that may be configured but not healthy. The health endpoint should support a **test mode** that decorates its response with detailed service health information:
+
+```typescript
+// GET /health?mode=test
+{
+  "status": "healthy",
+  "services": {
+    "postgres": { "connected": true, "latency_ms": 3 },
+    "redis": { "connected": true, "latency_ms": 1 },
+    "email_relay": { "configured": true, "smtp_verified": true },
+    "message_queue": { "connected": true, "pending_jobs": 0 },
+    "secrets_manager": { "connected": true, "resolved_secrets": 14 }
+  },
+  "version": "2.4.1",
+  "env": "test"
+}
+```
+
+**Why test mode on the health endpoint, not synthetic endpoints?** Creating `/test/db-health`, `/test/queue-health` etc. is an anti-pattern: it adds test-only code to production, leaks infrastructure details, and requires maintenance alongside the real endpoints. Instead, the existing health endpoint accepts a `?mode=test` query parameter that enriches its response with service-level diagnostics. The same endpoint serves both production health checks (simple status) and test-time validation (detailed diagnostics).
+
+### Test Fixture Data Bootstrap
+
+Stack tests need realistic data to exercise user journeys. A user can't place an order if the catalog is empty. A refund test can't run without a prior purchase. **Bootstrapping** is the process of loading test fixture data before domain tests begin.
+
+The bootstrap step (typically `02-bootstrap-test-data.stack.test.ts`) runs after the startup test and before domain tests:
+
+```typescript
+describe('Stack Test: Bootstrap test data', () => {
+  beforeAll(async () => {
+    await stack.start();
+    await stack.waitForReady();
+  });
+
+  test('seed catalog with products for checkout journeys', async () => {
+    // Primary: seed via API
+    const response = await adminClient.post('/test/seed-catalog', {
+      productCount: 10,
+      includeOutOfStock: true,
+      includeVariants: true
+    });
+    expect(response.status).toBe(200);
+
+    // Second-order: verify catalog is queryable
+    const catalog = await client.get('/products');
+    expect(catalog.data.products.length).toBe(10);
+  });
+
+  test('create test users with pre-configured roles', async () => {
+    const response = await adminClient.post('/test/seed-users', {
+      users: [
+        { role: 'admin', email: 'admin@test.com' },
+        { role: 'customer', email: 'customer@test.com' }
+      ]
+    });
+    expect(response.status).toBe(200);
+
+    // Verify users are queryable
+    const admin = await client.post('/auth/login', {
+      email: 'admin@test.com', password: response.data.tempPassword
+    });
+    expect(admin.status).toBe(200);
+  });
+});
+```
+
+**Bootstrap principles:**
+- Load data via the API, not direct database inserts — this tests the seed endpoints themselves
+- Use a dedicated admin/test client — never expose seed endpoints to production
+- Each bootstrap test creates one category of fixture data — products, users, configuration
+- Bootstrap tests are sequential: domain tests assume all bootstrap tests pass
+- If a bootstrap test fails, all subsequent tests are meaningless — the diagnostic signal is clear
 
 ### Cross-References
 
@@ -109,10 +188,11 @@ Each layer provides diagnostic signal. If primary passes but second-order fails,
 
 ### In Practice
 
-Example: Order placement test with three-layer assertions
+Example: "User places an order" journey with three-layer assertions
 
 ```typescript
-// Primary: API response
+// Journey: A user adds items to cart, checks out, and the order is fulfilled
+// Primary assertion: API response
 const orderResponse = await api.post('/orders', {
   items: [{ productId: 'prod_123', quantity: 2 }],
   shippingAddress: { zip: '90210', country: 'US' }
@@ -167,13 +247,14 @@ Tests often run in unpredictable order, making failures hard to diagnose. If a c
 
 **Sequential/additive test design** orders tests by dependency: each test assumes all previous tests pass. The sequence acts as a diagnostic ladder — if test N fails, the agent knows tests 1 through N-1 passed, narrowing the search space.
 
-Standard ordering:
+Standard ordering — each step is a user journey that builds on previous journeys:
 
-1. **Startup**: Container starts, health endpoint responds
-2. **Authentication**: Users can register and log in
-3. **Basic flows**: CRUD operations work
-4. **Domain operations**: Business logic behaves correctly
-5. **Advanced features**: Edge cases, complex workflows
+1. **Startup**: System comes online and reports healthy — the health endpoint runs in test mode, decorating responses with real service health (email relay connectivity, message queue status, secrets manager verification) without requiring synthetic endpoints
+2. **Bootstrap**: Test fixture data is loaded — seed users, pre-configured resources, reference data required for subsequent journeys
+3. **Authentication**: User registers, logs in, receives a valid session token
+4. **Basic flows**: User creates, reads, updates, and deletes resources
+5. **Domain operations**: User completes a domain-specific workflow (checkout, refund, export)
+6. **Advanced features**: User exercises edge cases and complex multi-step workflows
 
 ### In Practice
 
@@ -182,13 +263,15 @@ Use filenames to enforce order:
 ```
 tests/stack/
   01-app-startup.stack.test.ts
-  02-authentication.stack.test.ts
-  03-user-crud.stack.test.ts
-  04-checkout-basic.stack.test.ts
-  05-checkout-advanced.stack.test.ts
-  06-rate-limiting.stack.test.ts
-  07-reconciliation.stack.test.ts
+  02-bootstrap-test-data.stack.test.ts
+  03-authentication.stack.test.ts
+  04-user-crud.stack.test.ts
+  05-checkout-complete.stack.test.ts
+  06-refund-and-reconciliation.stack.test.ts
+  07-rate-limiting.stack.test.ts
 ```
+
+Each test is one atomic user journey. The sequence builds from infrastructure to domain logic:
 
 Example: If `04-checkout-basic.stack.test.ts` fails:
 

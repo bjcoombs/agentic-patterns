@@ -2,11 +2,11 @@
 02_user_registration.py
 
 Second test in the sequential stack test suite.
-Verifies user registration and retrieval flows.
+Models the atomic user journey: a new user signs up and can access their account.
 
 Demonstrates:
+- User journey framing (one complete interaction per test)
 - Full-loop assertion layering (primary, second-order, third-order)
-- User journey testing
 - Database state verification via API
 - Sequential dependency on startup tests
 """
@@ -44,11 +44,11 @@ def created_user_id(http_client, wait_for_ready) -> str:
 
 
 @pytest.mark.stack
-class TestUserRegistration:
-    """Verify user registration and management flows."""
+class TestUserSignUpJourney:
+    """Verify the atomic user journey: sign up, access account, see audit trail."""
 
     def test_create_user_returns_201(self, http_client, wait_for_ready):
-        """Primary assertion: POST /users creates a new user."""
+        """Journey step 1: POST /users creates a new user."""
         wait_for_ready()
 
         user_data = {

@@ -21,7 +21,7 @@ agentic-patterns/
 │   │   ├── migration-guide.md
 │   │   └── glossary.md
 │   └── references/
-│       ├── wyntrade-case-study.md
+│       ├── reference-telegram-trading-bot-case-study.md
 │       └── further-reading.md
 ├── examples/                    # Working code (TS + Python)
 ├── docs/diagrams/               # Excalidraw diagrams for L1-L4
@@ -85,7 +85,7 @@ See @README.md for detailed project overview.
 
 ## References
 
-- @docs/references/wyntrade-case-study.md — Production reference implementation
+- @docs/references/reference-telegram-trading-bot-case-study.md — Production reference implementation
 - @docs/references/further-reading.md — External resources
 
 ## Constitutional Rules (Never Violate)

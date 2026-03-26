@@ -1,9 +1,10 @@
 # Stack Test Example — TypeScript
 
-A minimal, working example of stack tests in TypeScript using Jest.
+A minimal, working example of stack tests in TypeScript using Jest. Each test models one **atomic user journey** — a complete interaction from the user's perspective.
 
 ## What This Demonstrates
 
+- **User journey framing**: Each test is one complete user interaction, not a component check
 - **Dynamic port allocation**: Ports assigned from available range (10000-65535)
 - **Unique container naming**: `{test-name}-{pid}-{random}-{service}` prevents collisions
 - **Transient volumes**: Data disappears when containers stop
@@ -22,8 +23,8 @@ A minimal, working example of stack tests in TypeScript using Jest.
 │   ├── config/
 │   │   └── stack-utils.ts    # StackTestUtils class
 │   └── stack/
-│       ├── 01-app-startup.stack.test.ts        # First: health check
-│       └── 02-user-registration.stack.test.ts  # Second: CRUD + audit
+│       ├── 01-app-startup.stack.test.ts        # Journey: system comes online
+│       └── 02-user-registration.stack.test.ts  # Journey: user signs up
 ```
 
 ## How to Run
@@ -52,7 +53,7 @@ npx jest --verbose
 
 ### 1. Sequential Test Design
 
-Tests are numbered `01-`, `02-` etc. to enforce ordering. Each test assumes all previous tests pass. This creates a diagnostic ladder: if test 02 fails, the agent knows test 01 passed, narrowing the problem space.
+Tests are numbered `01-`, `02-` etc. to enforce ordering. Each test assumes all previous tests pass. This creates a diagnostic ladder: if test 02 fails, the agent knows test 01 passed, narrowing the problem space. Each test models one atomic user journey — a complete interaction from the user's perspective.
 
 ### 2. Full-Loop Assertions
 

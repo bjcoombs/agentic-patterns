@@ -1,12 +1,12 @@
-# Wyntrade Case Study — Agentic Patterns in Production
+# Reference Telegram Trading Bot Project — Agentic Patterns in Production
 
-**Project:** wyntrade-core — Trading automation platform (DEX swaps, bridges, limit orders, DCA strategies, stop-loss, trailing stops)
+**Project:** Telegram trading bot — Trading automation platform (DEX swaps, bridges, limit orders, DCA strategies, stop-loss, trailing stops)
 
 **Tech Stack:** Node.js, PostgreSQL/TimescaleDB, Redis, Docker, Ethereum testnets
 
 **Scale:** Production-grade with comprehensive test coverage, real testnet blockchain trading
 
-This case study demonstrates how all five levels of the agentic patterns pyramid manifest in a production codebase. Wyntrade is not theoretical — it handles real blockchain transactions, manages user funds, and operates with financial-grade reliability requirements.
+This case study demonstrates how all five levels of the agentic patterns pyramid manifest in a production codebase. The project handles real blockchain transactions, manages user funds, and operates with financial-grade reliability requirements.
 
 ---
 
@@ -14,7 +14,7 @@ This case study demonstrates how all five levels of the agentic patterns pyramid
 
 ### CLAUDE.md as Constitution
 
-Wyntrade's CLAUDE.md is a 218-line contract that establishes the project's constitutional mandates. Unlike sprawling documents that agents cannot retain, it serves as a concise reference point for all development activity.
+The project's CLAUDE.md is a 218-line contract that establishes the project's constitutional mandates. Unlike sprawling documents that agents cannot retain, it serves as a concise reference point for all development activity.
 
 **Nine Constitutional Mandates:**
 
@@ -52,7 +52,7 @@ src/
 └── unified-platform.js  # Entry point
 ```
 
-Compare to technical layering (`services/`, `handlers/`, `utils/`, `types/`) — wyntrade's structure lets agents find all backup code in one place, all trading code in another, without cross-referencing four directories.
+Compare to technical layering (`services/`, `handlers/`, `utils/`, `types/`) — the project's structure lets agents find all backup code in one place, all trading code in another, without cross-referencing four directories.
 
 ### Progressive Disclosure
 
@@ -130,7 +130,60 @@ async isPortAvailable(port, host = '127.0.0.1') {
 
 No hardcoded ports, no conflicts, true parallel test execution.
 
-### Stack Sequencer
+### Health Endpoint with Bootstrap Status
+
+The health endpoint runs in test mode, decorating responses with real service diagnostics. Tests poll this endpoint until bootstrap completes:
+
+```javascript
+// GET /health (test mode response)
+{
+  "status": "healthy",
+  "timestamp": "2026-03-26T10:00:00Z",
+  "version": "2.4.1",
+  "uptime": 42.5,
+  "bootstrap": {
+    "completed": true,
+    "completedAt": "2026-03-26T10:00:01Z",
+    "results": {
+      "usersLoaded": 3,
+      "walletsConfigured": 5,
+      "chainsInitialized": 2
+    }
+  }
+}
+```
+
+The `bootstrap.completed` flag is the gate: no domain test runs until this is `true`. This replaces synthetic health-check endpoints with enriched responses on the existing health route — no test-only code leaks into production.
+
+### Test Fixture Bootstrapping
+
+Domain tests need realistic data: a user can't place a trade without a funded wallet. The bootstrap system loads test fixture data from JSON configuration:
+
+```javascript
+// config/bootstrap-data/bootstrap.json (simplified)
+{
+  "users": [
+    {
+      "userId": 1,
+      "email": "test_trader_1@test.example",
+      "role": "trader",
+      "wallets": [{
+        "chainId": 11155111,
+        "address": "0x93eb...",
+        "privateKey": "0xf286..."
+      }]
+    }
+  ],
+  "agents": [...],
+  "tokens": [...],
+  "testSettings": {
+    "priceInjection": true,
+    "syntheticOrders": false
+  }
+}
+```
+
+Bootstrapping loads via the ConfigManager — not direct database inserts. The startup test sequence is: (1) containers come up, (2) health endpoint reports `bootstrap.completed: true`, (3) test users exist and wallets are funded. Only then do domain tests begin.
 
 Tests are ordered by natural dependency:
 
@@ -261,68 +314,6 @@ When `tdd+` is invoked, it knows to reject mocked loggers and mocked ethers beca
 
 ---
 
-## L3 in Practice — Optimization
-
-### Intent Classification
-
-Wyntrade implements intent classification for Telegram routing:
-
-`src/core/telegram/intent/intent-classifier.js`:
-
-```javascript
-function classifyCallback(data) {
-    const callbackMap = {
-        [CALLBACKS.CANCEL]: INTENT_TYPES.CANCEL,
-        [CALLBACKS.BACK]: INTENT_TYPES.BACK,
-        [CALLBACKS.START_REGISTRATION]: INTENT_TYPES.START_REGISTRATION,
-        // ... 30+ mappings
-    };
-
-    if (callbackMap[data]) {
-        return { type: callbackMap[data] };
-    }
-
-    if (data.startsWith(CALLBACKS.NAVIGATE_PREFIX)) {
-        const target = data.slice(CALLBACKS.NAVIGATE_PREFIX.length);
-        return { type: INTENT_TYPES.NAVIGATE, target };
-    }
-
-    return { type: INTENT_TYPES.UNKNOWN };
-}
-```
-
-This pattern mirrors L3's intent classification for command routing — parse input into categories, then route accordingly.
-
-### Environment Detection
-
-The system detects execution mode:
-
-```javascript
-const forceContainerMode = this.options.forceContainerMode !== false;
-
-if (forceContainerMode) {
-    this.localExecutionMode = false;
-    this.useContainers = true;
-} else if (!process.env.DOCKER_CONTAINER_ID) {
-    this.logger.warn('WARNING: DOCKER_CONTAINER_ID not set - running in local development mode');
-}
-```
-
-This environment awareness enables context-aware routing decisions (e.g., use test logs vs. docker logs based on whether containers are running).
-
-### Harness-Agnostic Architecture
-
-`src/core/` contains zero framework imports:
-
-- `ServiceRegistry` — Dependency injection without framework coupling
-- `ConfigManager` — Configuration management without framework assumptions
-- `BullMQManager` — Queue abstraction (could swap implementations)
-- `NamespaceDatabase` — Database abstraction
-
-Only `src/routes/` and adapters know about Express. This isolation enables testing, portability, and framework evolution.
-
----
-
 ## L4 in Practice — Culture
 
 ### Evidence-Based Verification
@@ -374,42 +365,11 @@ Documentation is treated as a living contract with the codebase. When code chang
 
 ### Plan Archival
 
-`docs/plans/archive/` organizes completed work by month:
-
-```
-docs/plans/archive/
-├── 2026-02/
-│   ├── 2026-02-25-convergence-phase2-intent-classification.md
-│   ├── 2026-02-25-convergence-phase4-sft.md
-│   ├── 2026-02-27-convergence-phase7-extended-trading.md
-│   └── ...
-└── 2026-03/
-    └── ...
-```
-
-Historical plans remain accessible without cluttering active documentation.
+Completed plans are deleted once their work is merged. Version control preserves history — keeping stale plans in an `archive/` directory pollutes context and creates confusion about what's current. Agents don't need access to old plans; they need confidence that current docs reflect current reality.
 
 ### Continuous Documentation Reorganization
 
-The docs structure evolves with the codebase:
-
-```
-docs/
-├── 01-constitutional/     # Constitutional mandates
-├── 02-core-architecture/  # Core systems
-├── 03-configuration-bootstrap/
-├── 04-services-layer/
-├── 05-event-system/
-├── 06-chat-system/        # Added as chat platform support expanded
-├── 07-api-reference/
-├── 08-testing/
-├── 09-operations/
-├── 10-trading-system/
-├── 11-advanced-features/
-└── archive/               # Old docs moved here
-```
-
-When `06-chat-system/` was added for multi-platform chat abstraction, older docs moved to `archive/` — maintaining discoverability while preventing bloat.
+The docs structure evolves with the codebase. When `06-chat-system/` was added for multi-platform chat abstraction, superseded docs were deleted rather than archived. Version control preserves history — old docs left in `archive/` directories pollute context and create ambiguity about what's current. If a doc no longer reflects the system, delete it.
 
 ---
 
@@ -425,13 +385,9 @@ Stack tests provide the verification targets that skills (L2) enforce. The `tdd+
 
 ### How L2 Enables L3
 
-Skills establish patterns that optimization (L3) can automate. Intent classification started as a manual pattern, then became codified in `intent-classifier.js`. Future optimization layers can route based on these classified intents.
+Skills establish patterns that optimization (L3) can automate. Intent classification started as a manual pattern, then became codified in the project's intent routing system.
 
-### How L3 Enables L4
-
-Token efficiency (L3) frees resources for documentation rigor (L4). When commands route optimally, agents have budget for thorough verification and documentation updates.
-
-### How L4 Maintains L0-L3
+### How L4 Maintains L0-L2
 
 Evidence-based claims (L4) catch violations of constitutional rules (L0). Documentation health tracking (L4) catches drift in skill definitions (L2). The culture layer is the feedback loop that maintains all previous layers.
 
@@ -439,7 +395,7 @@ Evidence-based claims (L4) catch violations of constitutional rules (L0). Docume
 
 ## Key Takeaways
 
-1. **Constitutional rules must be enforceable** — Wyntrade's 9 mandates are codified in skills that activate during development, not just documented and forgotten.
+1. **Constitutional rules must be enforceable** — The project's 9 mandates are codified in skills that activate during development, not just documented and forgotten.
 
 2. **Testing infrastructure is production code** — StackTestUtils at 236KB is not an afterthought. It's the foundation that makes agentic development possible.
 
@@ -447,15 +403,14 @@ Evidence-based claims (L4) catch violations of constitutional rules (L0). Docume
 
 4. **Evidence beats claims** — The `verify+` skill's iron law ("No completion claims without fresh verification evidence") prevents false confidence from propagating.
 
-5. **Documentation is a contract** — 92% coverage tracking, plan archival, and continuous reorganization treat docs as living artifacts, not static write-once content.
+5. **Documentation is a contract** — 92% coverage tracking and continuous reorganization treat docs as living artifacts. Superseded docs are deleted, not archived — version control preserves history.
 
-6. **All levels integrate** — L0 constitutional rules enable L1 stack tests, which provide targets for L2 skills, which establish patterns for L3 optimization, which L4 culture maintains.
+6. **All levels integrate** — L0 constitutional rules enable L1 stack tests, which provide targets for L2 skills, which L4 culture maintains.
 
 ---
 
 ## Further Reading
 
-- **Wyntrade Repository:** `/home/jerome/wyntrade/wyntrade-core/.worktrees/tg-dash/`
 - **CLAUDE.md:** Project constitution and skills reference
 - **docs/README.md:** Documentation hub with coverage tracking
 - **docs/08-testing/:** Testing methodology guides

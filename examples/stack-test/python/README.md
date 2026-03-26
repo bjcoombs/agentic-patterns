@@ -1,9 +1,10 @@
 # Stack Test Example — Python
 
-A minimal, working example of stack tests in Python using pytest.
+A minimal, working example of stack tests in Python using pytest. Each test models one **atomic user journey** — a complete interaction from the user's perspective.
 
 ## What This Demonstrates
 
+- **User journey framing**: Each test is one complete user interaction, not a component check
 - **Dynamic port allocation**: Ports assigned from available range (10000-65535)
 - **Unique container naming**: `{test-name}-{pid}-{random}-{service}` prevents collisions
 - **Transient volumes**: Data disappears when containers stop
@@ -21,8 +22,8 @@ A minimal, working example of stack tests in Python using pytest.
 ├── tests/
 │   ├── conftest.py            # Session-scoped fixtures
 │   └── stack/
-│       ├── test_01_app_startup.py        # First: health check
-│       └── test_02_user_registration.py  # Second: CRUD + audit
+│       ├── test_01_app_startup.py        # Journey: system comes online
+│       └── test_02_user_registration.py  # Journey: user signs up
 ```
 
 ## How to Run
@@ -58,7 +59,7 @@ The `stack_config` fixture starts the stack once per test session. All tests in 
 
 ### 2. Sequential Test Design
 
-Tests are numbered `test_01_`, `test_02_` etc. Pytest runs files in alphabetical order, establishing a dependency ladder. If test 02 fails, the agent knows test 01 passed.
+Tests are numbered `test_01_`, `test_02_` etc. Pytest runs files in alphabetical order, establishing a dependency ladder. If test 02 fails, the agent knows test 01 passed. Each test models one atomic user journey — a complete interaction from the user's perspective.
 
 ### 3. Full-Loop Assertions
 

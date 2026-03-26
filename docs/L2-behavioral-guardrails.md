@@ -20,7 +20,7 @@ The guardrail framework consists of:
 
 ### Problem
 
-Claude Code provides base capabilities through superpowers like `brainstorming` and `test-driven-development`. However, production projects need project-specific constraints layered on top of these generic capabilities. Writing all constraints inline in prompts is verbose and inconsistent.
+Claude Code provides base capabilities through skills like `brainstorming` and `test-driven-development`. However, production projects need project-specific constraints layered on top of these generic capabilities. Writing all constraints inline in prompts is verbose and inconsistent.
 
 ### Solution
 
@@ -33,6 +33,8 @@ base capability (e.g., superpowers:test-driven-development)
     + integration points (how this skill connects to others)
     = skill overlay
 ```
+
+The overlay architecture works with **any structured skill set**, not just Claude Code's built-in capabilities. OpenSpec, custom agent frameworks, or any system that drives agent behavior through declarative configuration can be wrapped and extended with project-specific rules. The examples in this repo reference superpowers because it's the framework in active use, but the pattern is universal: identify the base skill, then overlay project constraints.
 
 A skill is a markdown file that declares:
 - **Frontmatter**: name, description, base reference

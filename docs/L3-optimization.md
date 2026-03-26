@@ -1,8 +1,8 @@
 # L3 Optimization — Token Efficiency & Agent Performance
 
 **Level**: Optimization (L3)
-**Prerequisites**: [L2 Guardrails](./L2-guardrails.md), [WISC Framework](./L1-wisc.md)
-**Related Patterns**: Damage Control Guardrails, Scout Pattern
+**Prerequisites**: [L2 Guardrails](./L2-guardrails.md)
+**Related Patterns**: Scout Pattern
 
 ---
 
@@ -234,7 +234,7 @@ Agents often "search blindly" — issuing `grep` and `find` commands without und
 
 ### Solution
 
-From the WISC framework: **invest tokens upfront in structured exploration**. Send a lightweight "scout" agent to map the codebase first:
+From the WISC framework (DIY Smart Code): **invest tokens upfront in structured exploration**. Send a lightweight "scout" agent to map the codebase first:
 
 1. **File tree**: Get directory structure and key files
 2. **Key exports**: Identify main entry points and exported symbols
@@ -282,7 +282,7 @@ target = map.exports.find("processPayment")  # O(1) lookup
 
 ### Cross-References
 
-- [WISC Framework](./L1-wisc.md) — Scout/Implementer pattern details
+- [WISC Framework](https://youtu.be/gyo0eRgsUWk) — Scout/Implementer pattern details
 - [jcodemunch](https://github.com/jeromedecock/jcodemunch) — Tool for indexing codebases
 
 ---
@@ -372,10 +372,9 @@ See [examples/guardrails](../examples/guardrails/) for a complete TypeScript imp
 
 ## Further Reading
 
-- [L1 — WISC Framework](./L1-wisc.md) — Scout/Implementer pattern
+- [WISC Framework](https://youtu.be/gyo0eRgsUWk) — Scout/Implementer pattern
 - [L2 — Guardrails](./L2-guardrails.md) — Enforcing behavioral rules
-- [Damage Control Guardrails](https://github.com/anthropics/damage-control-guardrails) — Full middleware implementation
-- [RTK](https://github.com/jeromedecock/rtk) — Token-optimized CLI proxy
+- [RTK](https://github.com/rtk-ai/rtk) — Token-optimized CLI proxy
 
 ## Practitioner Insight
 
