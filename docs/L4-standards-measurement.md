@@ -199,13 +199,13 @@ Test drift: test_legacy_flow() references deleted function old_flow()
 
 - **"Close enough" tolerance:** Ignoring minor drift because "it's basically right."
 - **Deferred fixes:** Filing tickets for drift instead of fixing immediately.
-- **Partial updates:** Updating code but forgetting docs (violates [Pattern 0.7](L0-foundation.md#pattern-07--documentation-as-contract)).
+- **Partial updates:** Updating code but forgetting docs (violates [Pattern 0.7](L0-foundation.md#pattern-07--documentation-as-system-map)).
 - **Zombie specs:** Keeping docs around for deleted features "for reference."
 - **Manual-only checks:** Relying on human review without automated detection.
 
 ### Cross-References
 
-- [Pattern 0.7 — Documentation as Contract](L0-foundation.md#pattern-07--documentation-as-contract): Drift is contract violation
+- [Pattern 0.7 — Documentation as System Map](L0-foundation.md#pattern-07--documentation-as-system-map): Drift breaks the map
 - **Pattern 4.1 — Evidence-Based Claims:** Automated checks provide evidence
 - **Pattern 4.3 — New Starter Standard:** Drift breaks new starter experience
 
@@ -221,7 +221,7 @@ Projects accumulate implicit knowledge that exists only in team members' heads. 
 
 **The test: Can someone with zero context understand your project from CLAUDE.md + README + file structure alone?** If the answer is no to any of these — what it does, how to run it, where to add features, what patterns to follow, how to test changes — the entry points need work.
 
-This is the practical application of [Pattern 0.6](L0-foundation.md#pattern-06--ai-as-new-starter-standard), maintained as a periodic audit in L4.
+This is the practical application of [Pattern 0.9](L0-foundation.md#pattern-09--ai-as-new-starter-standard), maintained as a periodic audit in L4.
 
 ### In Practice
 
@@ -244,7 +244,7 @@ This is the practical application of [Pattern 0.6](L0-foundation.md#pattern-06--
 ### Cross-References
 
 - [Pattern 0.4 — CLAUDE.md as Project Constitution](L0-foundation.md#pattern-04--claude-md-as-project-constitution): The foundation of discoverability
-- [Pattern 0.7 — Documentation as Contract](L0-foundation.md#pattern-07--documentation-as-contract): Entry points ARE the contract
+- [Pattern 0.7 — Documentation as System Map](L0-foundation.md#pattern-07--documentation-as-system-map): Entry points ARE the map
 - **Pattern 4.2 — Spec Drift Detection:** Audits catch entry point drift
 
 ---

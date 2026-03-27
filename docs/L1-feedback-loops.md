@@ -443,6 +443,7 @@ const mockStripe = {
 ### Cross-References
 
 - **Pattern 1.1 (Stack Tests)**: No-mocks is core to stack test philosophy
+- [Pattern 0.5 — Unit Tests as Contract](L0-foundation.md#pattern-05--unit-tests-as-contract): Unit tests validate individual module contracts in isolation — stack tests validate system behavior through the API
 - **L2 Deterministic Simulation**: When you truly need determinism (e.g., replay tests), use simulation, not mocks
 
 ---

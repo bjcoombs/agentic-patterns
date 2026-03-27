@@ -153,7 +153,7 @@ src/
 
 **Anti-Pattern**: Creating `shared/` or `common/` directories that become dumping grounds for unrelated code. If code is shared between two domains, question whether those domains are properly separated.
 
-**Cross-References**: [Pattern 0.1](#pattern-01--deep-modules) shows how deep modules reinforce conceptual organization. [L1: Stack Tests](L1-feedback-loops.md) demonstrates testing at domain boundaries.
+**Cross-References**: [Pattern 0.1](#pattern-01--deep-modules) shows how deep modules reinforce conceptual organization. [Pattern 0.7](#pattern-07--documentation-as-system-map) — file structure is the physical map; documentation is the conceptual map. [L1: Stack Tests](L1-feedback-loops.md) demonstrates testing at domain boundaries.
 
 ---
 
@@ -187,11 +187,51 @@ Every referenced doc must be reachable from CLAUDE.md — it serves as the maste
 
 **Anti-Pattern**: Writing tutorials or extensive guides in CLAUDE.md. Every line beyond 150 displaces context the agent needs for the actual task. Link to docs instead.
 
-**Cross-References**: [Pattern 0.6](#pattern-06--ai-as-new-starter-standard) tests whether CLAUDE.md succeeds. [Pattern 0.7 — Documentation as Contract](#pattern-07--documentation-as-contract) covers keeping docs in sync with code.
+**Cross-References**: [Pattern 0.9](#pattern-09--ai-as-new-starter-standard) tests whether CLAUDE.md succeeds. [Pattern 0.7 — Documentation as System Map](#pattern-07--documentation-as-system-map) covers keeping the system map in sync with code.
 
 ---
 
-## Pattern 0.5 — Git Worktree-Based Development
+## Pattern 0.5 — Unit Tests as Contract
+
+**Problem**: Documentation describes intent. Unit tests define contract. Documentation can drift from reality — it describes what the code *should* do, not what it *actually* does. Unit tests are the executable specification that never lies: they either pass or fail, and their assertions are the ground truth of system behavior.
+
+In agentic development, unit tests become even more important. Agents lack the intuition to interpolate between what docs say and what code does. They need a reliable specification layer — and unit tests are that layer. Documentation maps the system ([Pattern 0.7](#pattern-07--documentation-as-system-map)); unit tests are the contract it must satisfy.
+
+**Solution**: Treat unit tests as the contract for your codebase — the executable specification that defines what each module does, what edge cases it handles, and what happens when things go wrong. What changes with agentic engineering is not the role of unit tests but the expectations you can place on them.
+
+**What agentic engineering enables in unit testing:**
+
+**Exhaustive coverage** — Agents generate test cases at a pace humans can't match. Counsel the agent to focus on high-value tests (boundary conditions, error paths, integration seams) rather than achieving 100% line coverage with trivial assertions. Coverage without diagnosticity is waste.
+
+**Rapid mock scaffolding** — The tedious, time-consuming work of mocking complex dependencies for unit tests is fast and mechanical for an agent. When a module requires twelve mock objects with specific return values, the agent assembles them in seconds. This shifts the bottleneck from "setting up the test" to "deciding what the test should verify."
+
+**Architectural direction** — Unit tests provide a mechanism for directing refactoring from an architectural standpoint. When restructuring a module, write the test plan first, have the agent review it with you for critical changes, refine the approach using plan mode, then execute. Tests become the contract that the refactoring must satisfy.
+
+**Peer and temporary tests** — Agents can quickly create new tests to validate different approaches during exploration. When debugging a complex failure, the agent can boil down the focus into a concise, isolated test case that captures the essence of the problem — then reflect the fix back into the more complex code context. These temporary tests validate hypotheses before committing to changes.
+
+**Documentation fidelity** — Unit tests ensure that documentation refreshes capture critical nuances. When analyzing code for documentation updates, test assertions reveal behavior that might otherwise be missed — edge cases, error handling paths, and implicit contracts that are exercised by tests but not documented. The contract (tests) keeps the map (docs) honest.
+
+**In Practice**:
+
+```
+During a refactoring session:
+
+1. Agent reads current tests → understands existing contract
+2. You review test plan together in plan mode → refine coverage gaps
+3. Agent executes refactoring against passing tests → contract preserved
+4. Agent adds new tests for changed behavior → contract extended
+5. Tests document what the code actually does → docs stay accurate
+```
+
+**Unit tests and stack tests are complementary, not competing concerns.** Stack tests ([L1](L1-feedback-loops.md#pattern-11--stack-tests)) validate end-to-end user journeys through the full system. Unit tests validate individual module contracts in isolation. A codebase needs both: stack tests catch integration failures; unit tests catch logic errors within modules. Dismissing a unit test failure while trusting stack test results means relying on partial feedback.
+
+**Anti-Pattern**: Relying on documentation as the primary contract. Documentation drifts. Tests execute. Treating unit tests as subordinate to stack tests — both layers provide distinct, necessary signals. Writing tests for coverage metrics rather than diagnostic value.
+
+**Cross-References**: [L1: Stack Tests](L1-feedback-loops.md#pattern-11--stack-tests) — the system-level complement to unit tests. [Pattern 0.4](#pattern-04--claude-md-as-project-constitution) — CLAUDE.md as the human-readable contract layer. [L2: Zero-Defect Tolerance](L2-behavioral-guardrails.md#pattern-25--zero-defect-tolerance) — every test failure matters, unit or stack.
+
+---
+
+## Pattern 0.6 — Git Worktree-Based Development
 
 **Problem**: Multiple agents working on the same codebase create conflicts. Switching branches leaves artifacts. Experiments risk the main branch. Context carries over between sessions, creating hidden state.
 
@@ -223,31 +263,13 @@ Convention: `.worktrees/<branch-name>/` directory.
 
 ---
 
-## Pattern 0.6 — AI-as-New-Starter Standard
+## Pattern 0.7 — Documentation as System Map
 
-**Problem**: Projects accumulate implicit knowledge. "Oh, we always put types in `src/types/`" or "utils files are in `shared/`" — assumptions never written down. Each assumption is a point where an agent will go wrong.
+**Problem**: Stale documentation is worse than no documentation. When docs are outdated, agents follow them with false confidence, leading to wasted tokens, incorrect implementations, and cascading errors. Documentation freshness is often treated as a one-time task rather than a continuous obligation. Documentation and file structure ([Pattern 0.3](#pattern-03--conceptual-file-organization)) serve the same purpose at different levels: both help agents navigate the codebase. When either drifts, discoverability breaks.
 
-**Solution**: If someone with zero context cannot understand your project from CLAUDE.md + README + file structure alone, the project is not agentic-ready. Every assumption not codified in these entry points creates friction for AI agents.
+**Solution**: **Treat documentation as the system map — the navigational layer that maps structure, intent, and conventions.** When code changes, update the corresponding documentation in the SAME task—not deferred to "later." Every change that affects behavior must include a corresponding documentation update.
 
-**In Practice**:
-- Test by asking: "Would a new developer understand this from README alone?"
-- Put answers in CLAUDE.md, not tribal knowledge
-- Let file structure tell the story
-- Explicit conventions over implicit ones
-
-**Anti-Pattern**: "They should just read the code." Code shows what exists, not why. AI agents need intent and structure, not just implementation.
-
-**Cross-References**: [Pattern 0.4](#pattern-04--claude-md-as-project-constitution) specifies CLAUDE.md format. [L4: New Starter Audit](L4-standards-measurement.md#pattern-43--new-starter-standard) covers maintaining this over time.
-
----
-
-## Pattern 0.7 — Documentation as Contract
-
-**Problem**: Stale documentation is worse than no documentation. When docs are outdated, agents follow them with false confidence, leading to wasted tokens, incorrect implementations, and cascading errors. Documentation freshness is often treated as a one-time task rather than a continuous obligation.
-
-**Solution**: **Treat documentation as a living contract with the codebase.** When code changes, update the corresponding documentation in the SAME task—not deferred to "later." Every change that affects behavior must include a corresponding documentation update.
-
-The CLAUDE.md master index pattern (from [Pattern 0.4](#pattern-04--claude-md-as-project-constitution)) is the enforcement mechanism: documentation not linked from CLAUDE.md is orphaned and therefore dead. Link validation is part of the contract.
+The CLAUDE.md master index pattern (from [Pattern 0.4](#pattern-04--claude-md-as-project-constitution)) is the enforcement mechanism: documentation not linked from CLAUDE.md is orphaned and therefore dead. Link validation is part of keeping the map current.
 
 **Key principles:**
 - **Synchronous updates:** Code changes and doc updates happen in the same task
@@ -287,13 +309,13 @@ Task: Refactor authentication flow
 
 **Anti-Pattern**: "Good enough" documentation ("the agent can figure it out"). Deferred updates (code changes + doc ticket for "later"). Orphaned content not linked from CLAUDE.md. Unverified examples. Zombie docs kept around — version control is the archive.
 
-**Cross-References**: [Pattern 0.4](#pattern-04--claude-md-as-project-constitution) establishes the master index mechanism. [Pattern 4.2 — Spec Drift Detection](L4-standards-measurement.md#pattern-42--spec-drift-detection) provides automated checks for doc freshness. [Pattern 4.3 — New Starter Standard](L4-standards-measurement.md#pattern-43--new-starter-standard) is the ultimate test for entry point clarity.
+**Cross-References**: [Pattern 0.3](#pattern-03--conceptual-file-organization) — file structure is the physical map; docs are the conceptual map. Together they provide complete navigability. [Pattern 0.4](#pattern-04--claude-md-as-project-constitution) establishes the master index mechanism. [Pattern 4.2 — Spec Drift Detection](L4-standards-measurement.md#pattern-42--spec-drift-detection) provides automated checks for doc freshness. [Pattern 4.3 — New Starter Standard](L4-standards-measurement.md#pattern-43--new-starter-standard) is the ultimate test for entry point clarity.
 
 ---
 
 ## Pattern 0.8 — Aggressive Cleanup
 
-**Problem**: Dead code, unused imports, stale comments, and deprecated files accumulate over time. Every file an agent reads is context that could displace something important. Unused code is not harmless legacy—it's noise that degrades agent performance by consuming context window and creating confusion about what's actually used.
+**Problem**: Dead code, unused imports, stale comments, and deprecated files accumulate over time. Every file an agent reads is context that could displace something important. Unused code is not harmless legacy—it's noise that degrades agent performance by consuming context window and creating confusion about what's actually used. Documentation cleanup is a separate concern covered by [Pattern 0.7](#pattern-07--documentation-as-system-map).
 
 **Solution**: **Treat cleanup as a continuous practice, not a quarterly sprint.** When you find dead code during a task, remove it as part of that task. Every task should leave the codebase cleaner than it found it.
 
@@ -302,7 +324,6 @@ Task: Refactor authentication flow
 - **Dead code:** Remove functions, classes, and methods that aren't called
 - **Stale comments:** Remove comments that duplicate the code or are outdated
 - **Deprecated files:** Remove files marked as deprecated or unused
-- **Superseded documentation:** Delete docs that no longer reflect the system — do not move them to an `archive/` directory. Version control preserves history; keeping stale docs pollutes context and creates ambiguity about what's current.
 - **TODO comments:** Either do the task or remove the TODO
 - **Debug code:** Remove print statements, debug logging, temporary files
 
@@ -365,9 +386,27 @@ Cleanup:
 - Remove stale TODO comments from 2023
 ```
 
-**Anti-Pattern**: "Just in case" retention. Commented-out code. Defensive cleanup avoidance ("someone might be using this"). Cleanup theater (removing a few imports but leaving major dead code). Deferred cleanup. Archive directories.
+**Anti-Pattern**: "Just in case" retention. Commented-out code. Defensive cleanup avoidance ("someone might be using this"). Cleanup theater (removing a few imports but leaving major dead code). Deferred cleanup.
 
-**Cross-References**: [Pattern 4.1 — Evidence-Based Claims](L4-standards-measurement.md#pattern-41--evidence-based-claims) establishes the standard for verifying cleanup doesn't break anything. [Pattern 4.2 — Spec Drift Detection](L4-standards-measurement.md#pattern-42--spec-drift-detection) provides automated tools for detecting dead code. [Pattern 0.4](#pattern-04--claude-md-as-project-constitution) requires removing docs for deleted code.
+**Cross-References**: [Pattern 0.3](#pattern-03--conceptual-file-organization) — clean file structure and clean code reinforce each other. [Pattern 0.7](#pattern-07--documentation-as-system-map) — documentation cleanup is a separate concern; stale docs are covered there. [Pattern 4.1 — Evidence-Based Claims](L4-standards-measurement.md#pattern-41--evidence-based-claims) establishes the standard for verifying cleanup doesn't break anything. [Pattern 4.2 — Spec Drift Detection](L4-standards-measurement.md#pattern-42--spec-drift-detection) provides automated tools for detecting dead code.
+
+---
+
+## Pattern 0.9 — AI-as-New-Starter Standard
+
+**Problem**: Projects accumulate implicit knowledge. "Oh, we always put types in `src/types/`" or "utils files are in `shared/`" — assumptions never written down. Each assumption is a point where an agent will go wrong.
+
+**Solution**: If someone with zero context cannot understand your project from CLAUDE.md + README + file structure alone, the project is not agentic-ready. Every assumption not codified in these entry points creates friction for AI agents.
+
+**In Practice**:
+- Test by asking: "Would a new developer understand this from README alone?"
+- Put answers in CLAUDE.md, not tribal knowledge
+- Let file structure tell the story
+- Explicit conventions over implicit ones
+
+**Anti-Pattern**: "They should just read the code." Code shows what exists, not why. AI agents need intent and structure, not just implementation.
+
+**Cross-References**: [Pattern 0.4](#pattern-04--claude-md-as-project-constitution) specifies CLAUDE.md format. [L4: New Starter Audit](L4-standards-measurement.md#pattern-43--new-starter-standard) covers maintaining this over time.
 
 ---
 

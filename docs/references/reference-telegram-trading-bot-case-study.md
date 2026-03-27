@@ -50,9 +50,9 @@ The worktree at `.worktrees/tg-dash/` demonstrates feature isolation:
 - No risk to main branch during experimental work
 - Clean slate for each feature branch
 
-### Documentation as Contract
+### Documentation as System Map
 
-The project treats documentation as a living contract with the codebase. When code changes, docs update in the same task. DOCS commits at 13.5% of the total (172 of 1,276 non-merge commits) confirm this is not aspirational — it is practiced daily.
+The project treats documentation as the system map — the navigational layer that keeps structure, intent, and conventions current. When code changes, docs update in the same task. DOCS commits at 13.5% of the total (172 of 1,276 non-merge commits) confirm this is not aspirational — it is practiced daily.
 
 ### Documentation Health Tracking
 
@@ -442,7 +442,7 @@ Token optimization isn't just cheaper — it makes agents more effective. Struct
 
 4. **Evidence beats claims** — The `verify+` skill's iron law ("No completion claims without fresh verification evidence") prevents false confidence from propagating.
 
-5. **Documentation is a contract** — 92% coverage tracking and continuous reorganization treat docs as living artifacts. Superseded docs are deleted, not archived — version control preserves history.
+5. **Documentation is the system map** — 92% coverage tracking and continuous reorganization treat docs as living artifacts. Superseded docs are deleted, not archived — version control preserves history.
 
 6. **All levels integrate** — L0 constitutional rules enable L1 stack tests, which provide targets for L2 skills, which L3 amplifies through token optimization, which L4 standards & measurement maintains.
 
@@ -486,7 +486,7 @@ February 2026 was the busiest period: 629 non-merge commits across 17 active day
 
 1. **Testing is a first-class output, not an afterthought** — 12.5% of commits are TEST, comparable to DOCS (13.5%). Test infrastructure received dedicated investment in November-December before the feature acceleration in January-February.
 
-2. **Documentation keeps pace with code** — DOCS commits at 13.5% indicate continuous documentation updates, consistent with the L0 documentation-as-contract pattern. Docs are not deferred to a separate phase.
+2. **Documentation keeps pace with code** — DOCS commits at 13.5% indicate continuous documentation updates, consistent with the L0 documentation-as-system-map pattern. Docs are not deferred to a separate phase.
 
 3. **Refactoring is continuous** — 8.5% REFACTOR commits show ongoing code quality maintenance rather than periodic cleanup sprints. This aligns with L0 aggressive cleanup as a continuous practice.
 

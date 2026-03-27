@@ -116,7 +116,7 @@ Alphabetical reference for specialized terms used across the agentic-patterns li
 ### New Starter Standard
 **Level**: L0 - Foundation, L4 - Standards & Measurement
 **Definition**: Ultimate test where someone with zero context must be able to understand the project from CLAUDE.md + README + file structure alone.
-**See**: [Pattern 0.6 - AI-as-New-Starter Standard](../L0-foundation.md#pattern-06--ai-as-new-starter-standard) | [Pattern 4.3 - New Starter Standard](../L4-standards-measurement.md#pattern-43--new-starter-standard)
+**See**: [Pattern 0.9 - AI-as-New-Starter Standard](../L0-foundation.md#pattern-09--ai-as-new-starter-standard) | [Pattern 4.3 - New Starter Standard](../L4-standards-measurement.md#pattern-43--new-starter-standard)
 
 ### No-Mock Philosophy
 **Level**: L1 - Feedback Loops

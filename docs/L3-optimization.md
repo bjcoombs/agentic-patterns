@@ -384,7 +384,7 @@ This doesn't mean monorepos are wrong. It means the cost-benefit calculation has
 1. Each repo maintains its own CLAUDE.md with API contracts and public interfaces
 2. When a service changes its API, the agent reads dependent repos' CLAUDE.md files to identify breakage
 3. The agent proposes coordinated changes across repos based on analysis, not assumption
-4. L4 documentation freshness ensures contracts stay current in each repo
+4. L4 documentation freshness ensures system maps stay current in each repo
 
 This is a **subjective trade-off, not a hard rule**. The point is that agentic development makes the multi-repo approach more viable than it was — the coordination cost that previously required a monorepo can now be handled by an agent that reads across repositories.
 

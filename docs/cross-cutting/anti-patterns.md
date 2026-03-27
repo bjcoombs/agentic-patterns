@@ -178,7 +178,7 @@ grep -r "filename.md" docs/CLAUDE.md
 - Context carries over between sessions, creating hidden state
 
 **What To Do Instead**
-Apply [Pattern 0.5 — Git Worktree-Based Development](../L0-foundation.md#pattern-05--git-worktree-based-development):
+Apply [Pattern 0.6 — Git Worktree-Based Development](../L0-foundation.md#pattern-06--git-worktree-based-development):
 - Use git worktrees as default working model
 - Each task or feature branch gets its own working directory
 - Convention: `.worktrees/<branch-name>/` directory
@@ -642,7 +642,7 @@ async function searchCode(query: string) {
 - Compound interest of technical debt
 
 **What To Do Instead**
-Apply [Pattern 0.7 — Documentation as Contract](../L0-foundation.md#pattern-07--documentation-as-contract):
+Apply [Pattern 0.7 — Documentation as System Map](../L0-foundation.md#pattern-07--documentation-as-system-map):
 - Code changes and doc updates happen in the SAME task
 - Never defer documentation to "later"
 - Every behavior change requires immediate doc update
