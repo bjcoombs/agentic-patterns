@@ -434,7 +434,7 @@ const mockStripe = {
 
 ### Anti-Pattern
 
-**Don't** mock databases "because they're slow." PostgreSQL in Docker adds ~2 seconds to startup. Stack tests are already slow — you're not optimizing the right thing. Mock databases to test complex queries in unit tests, not in stack tests.
+**Don't** mock databases "because they're slow." PostgreSQL in Docker adds ~2 seconds to startup. Mock databases to test complex queries in unit tests, not in stack tests.
 
 **Don't** mock external services that provide test environments. Stripe, Plaid, Twilio, etc. all provide test/sandbox modes. Use them — they catch real integration bugs.
 

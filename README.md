@@ -43,7 +43,7 @@ Patterns are organized into five levels, each building on the previous. Adopt th
 
 **[L3: Optimization](docs/L3-optimization.md)** — Agent efficiency is quality, not just speed. Smart routing redirects shell commands to specialized tools (60-80% token reduction). Intent classification, environment-aware routing, and the Scout Pattern (from the WISC context engineering framework: Write, Isolate, Select, Compress) turn exploration into structured context.
 
-**[L4: Culture](docs/L4-culture.md)** — The rigor expected of an agentic bot is higher than you'd ask of a human — and for good reason. Documentation freshness, evidence-based claims, aggressive cleanup, and spec drift detection. Bots don't have intuition to work around stale docs.
+**[L4: Culture](docs/L4-culture.md)** — The rigor expected of an agentic bot is higher than you'd ask of a human — and for good reason. Documentation freshness, evidence-based claims, aggressive cleanup, and spec drift detection. Bots don't have intuition to work around stale docs. Despite being the top layer, L4 practices should begin on day one alongside L0 — documentation freshness, cleanup of dead code and context noise, and iterative refinement are habits that compound, not a finishing phase.
 
 ## Getting Started
 

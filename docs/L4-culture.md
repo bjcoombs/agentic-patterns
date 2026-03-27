@@ -2,6 +2,8 @@
 
 L4 is the capstone layer that maintains the standards established by L0-L3. Where L0 defines the entry points and L1-L3 provide execution patterns, L4 ensures continuous quality through documentation rigor, evidence-based work, aggressive cleanup, drift detection, and the new starter standard.
 
+**Don't wait for L4 to start practicing L4.** While the pyramid implies a sequential adoption order, L4's practices — documentation freshness, aggressive cleanup of dead code and stale context noise, and iterative refinement — should begin on day one, alongside L0 foundation work. A project that postpones these practices accumulates debt from the start: docs written during initial setup that are already stale by the time L1 tests are added, dead code left behind from early prototyping, and context noise that slows every subsequent agent session. The habits formed in L4 are not a finishing phase — they are the hygiene that makes every other level sustainable.
+
 ---
 
 ## Pattern 4.1 — Documentation as Contract
