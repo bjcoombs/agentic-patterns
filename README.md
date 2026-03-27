@@ -43,13 +43,13 @@ Patterns are organized into five levels, each building on the previous. Adopt th
 
 **[L3: Optimization](docs/L3-optimization.md)** — Agent efficiency is quality, not just speed. Smart routing redirects shell commands to specialized tools (60-80% token reduction). Intent classification, environment-aware routing, and the Scout Pattern (from the WISC context engineering framework: Write, Isolate, Select, Compress) turn exploration into structured context.
 
-**[L4: Culture](docs/L4-culture.md)** — The rigor expected of an agentic bot is higher than you'd ask of a human — and for good reason. Documentation freshness, evidence-based claims, aggressive cleanup, and spec drift detection. Bots don't have intuition to work around stale docs. Despite being the top layer, L4 practices should begin on day one alongside L0 — documentation freshness, cleanup of dead code and context noise, and iterative refinement are habits that compound, not a finishing phase.
+**[L4: Standards & Measurement](docs/L4-standards-measurement.md)** — Evidence-based claims, spec drift detection, the new starter audit, and development metrics. The maturity layer that verifies L0-L3 are holding and measures their impact over time. Documentation freshness and aggressive cleanup are foundation-level concerns (L0), not finishing-phase practices.
 
 ## Getting Started
 
 1. **New to agentic development?** Start with [L0: Foundation](docs/L0-foundation.md). The structural changes there are the highest-impact, lowest-effort starting point.
 2. **Already using AI coding tools?** Jump to [L1: Feedback Loops](docs/L1-feedback-loops.md) to understand why your tests might be giving your agent incomplete feedback.
-3. **Building team practices?** [L2: Behavioral Guardrails](docs/L2-behavioral-guardrails.md) and [L4: Culture](docs/L4-culture.md) together establish the discipline layer.
+3. **Building team practices?** [L2: Behavioral Guardrails](docs/L2-behavioral-guardrails.md) and [L4: Standards & Measurement](docs/L4-standards-measurement.md) together establish the discipline layer.
 4. **Want a phased adoption plan?** See the [Migration Guide](docs/cross-cutting/migration-guide.md) for a step-by-step path from traditional to agentic practices.
 
 ## Audience

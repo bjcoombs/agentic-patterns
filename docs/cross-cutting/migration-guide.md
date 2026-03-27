@@ -95,11 +95,11 @@ Use the agentic patterns pyramid as a framework:
 
 | Level | Focus | Common Gaps | Quick Wins |
 |-------|-------|-------------|------------|
-| **L0 Foundation** | Project structure, CLAUDE.md | No CLAUDE.md, layer-based organization | Write CLAUDE.md, restructure by domain |
+| **L0 Foundation** | Project structure, CLAUDE.md, doc freshness, cleanup | No CLAUDE.md, layer-based organization, stale docs, dead code | Write CLAUDE.md, restructure by domain, establish doc/cleanup practices |
 | **L1 Feedback Loops** | Stack tests, full-loop assertions | Mock-heavy integration tests, shallow assertions | Add app-startup test, implement sequential tests |
 | **L2 Guardrails** | Skills, hooks, behavioral rules | No enforcement, agents make common errors | Add test-integrity skill, implement PreToolUse hooks |
 | **L3 Optimization** | Smart routing, structured search | Raw grep/cat commands, token waste | Set up jcodemunch, implement routing guardrails |
-| **L4 Culture** | Documentation rigor, cleanup, drift detection | Stale docs, dead code accumulation | Establish doc update workflow, schedule cleanup sessions |
+| **L4 Standards & Measurement** | Evidence-based claims, drift detection, metrics | Claims without evidence, spec drift, no measurement | Establish evidence standard, automate drift checks, define metrics |
 
 **Prioritization matrix:**
 
@@ -109,7 +109,7 @@ Use the agentic patterns pyramid as a framework:
 | Layer-based file structure | High | Medium | **Do second** |
 | Mock-heavy tests | Medium | High | Phase 2 |
 | No structured search | Medium | Low | Phase 4 |
-| Stale documentation | Low | Medium | Phase 5 |
+| Stale documentation | High | Low | Phase 1 |
 
 ### Expected Output: Prioritized List
 
@@ -151,7 +151,7 @@ Migration Roadmap:
 2. Week 2-3: Add stack tests, remove mocks (L1)
 3. Week 4-5: Implement test-integrity skill, add hooks (L2)
 4. Week 6: Set up jcodemunch, implement routing (L3)
-5. Ongoing: Documentation rigor, cleanup (L4)
+5. Ongoing: Documentation rigor, cleanup (L0); metrics, drift audits (L4)
 ```
 
 ---
@@ -261,7 +261,7 @@ src/
 - @docs/L1-feedback-loops.md
 - @docs/L2-behavioral-guardrails.md
 - @docs/L3-optimization.md
-- @docs/L4-culture.md
+- @docs/L4-standards-measurement.md
 
 ## Quick Start
 [How to run the project locally in 3-5 commands.]
@@ -345,7 +345,7 @@ find docs -name "*.md" -exec grep -l "\[.*\](.*\.md)" {} \; | \
 - @docs/L3-optimization.md — Token efficiency and smart routing
 
 ### Culture (L4)
-- @docs/L4-culture.md — Documentation rigor and cleanup
+- @docs/L4-standards-measurement.md — Evidence, drift detection, metrics
 
 ### Cross-Cutting
 - @docs/cross-cutting/migration-guide.md — This guide
@@ -1231,15 +1231,15 @@ claude "Find all functions that call processPayment"
 
 ---
 
-## Phase 5: L4 Culture
+## Phase 5: L4 Standards & Measurement
 
-**Goal:** Establish continuous quality practices that maintain standards over time.
+**Goal:** Establish evidence-based discipline, drift detection, and outcome measurement.
 
 **Time:** Ongoing (establish in 1-2 weeks, practice continuously)
 
 **Team:** Whole team
 
-**Value:** Sustained quality, reduced tech debt, smoother onboarding.
+**Value:** Measurable improvement, sustained quality, drift prevention.
 
 ### Step 1: Establish Review Checklists
 
@@ -1296,90 +1296,7 @@ claude "Find all functions that call processPayment"
 
 **Integration:** Add checklist to PR template and require reviewers to check all boxes before approval.
 
-### Step 2: Create Documentation Freshness Workflow
-
-**Problem:** Documentation drifts from code. "I'll update the docs later" never happens.
-
-**Solution:** Code changes and doc updates happen in the same task.
-
-**Workflow:**
-
-**Before starting a task:**
-1. Read the relevant documentation sections
-2. Verify examples match current code
-3. If docs are stale, flag it before proceeding
-
-**During implementation:**
-1. Make code changes
-2. IMMEDIATELY update affected docs
-3. Update CLAUDE.md links if structure changed
-4. Run link validation to catch orphans
-
-**Before marking task complete:**
-```bash
-# Check for broken links
-find docs -name "*.md" -exec grep -l "\[.*\](.*\.md)" {} \; | \
-  while read f; do
-    grep -o '\[.*\]([^)]*\.md)' "$f" | \
-    while read link; do
-      target=$(echo "$link" | sed 's/.*(\(.*\))/\1/')
-      if [ ! -f "docs/$target" ]; then
-        echo "Broken link in $f: $target"
-      fi
-    done
-  done
-```
-
-**Commit message pattern:**
-```
-[Feature description]
-
-Documentation:
-- Updated L1/testing.md with new flow
-- Added L2/new-pattern.md
-- Verified all links from CLAUDE.md
-```
-
-### Step 3: Set Up Aggressive Cleanup Practice
-
-**Problem:** Dead code, unused imports, and stale comments accumulate over time.
-
-**Solution:** Remove dead code as you find it, during every task.
-
-**Detection tools:**
-
-```bash
-# Unused imports (Python)
-$ ruff check --select F401
-
-# Dead code detection
-$ vulture myproject/
-
-# Find stale TODOs
-$ grep -r "TODO" --include="*.py" | grep "201[0-9]"  # Old TODOs
-
-# Find deprecated markers
-$ grep -r "deprecated" --include="*.py"
-```
-
-**During any task:**
-1. Use the relevant file
-2. Notice dead code nearby
-3. Remove it as part of the same commit
-4. Verify nothing breaks (run tests)
-5. Note the cleanup in commit message
-
-**Commit message pattern:**
-```
-[Primary task description]
-
-Cleanup:
-- Remove unused imports in X files
-- Delete dead function: old_auth_method()
-- Remove stale TODO comments from 2023
-```
-
-### Step 4: Schedule Periodic Spec Drift Audits
+### Step 2: Schedule Periodic Spec Drift Audits
 
 **Problem:** Documentation, tests, and code drift apart over time.
 
@@ -1418,7 +1335,7 @@ pytest --collect-only --quiet
 4. Verify: Run detection again
 5. Commit: "Fix spec drift in [component]"
 
-### Step 5: Make the New Starter Test Part of Onboarding
+### Step 3: Make the New Starter Test Part of Onboarding
 
 **Problem:** New contributors struggle because onboarding documents assume context they don't have.
 
@@ -1446,6 +1363,22 @@ pytest --collect-only --quiet
 - Prevents accumulated implicit knowledge
 - Ensures entry points remain clear
 
+### Step 4: Define and Track Development Metrics
+
+**Problem:** Without measurement, teams can't tell if their investment in agentic practices is paying off or where to focus next.
+
+**Solution:** Pick one metric from each category ([Pattern 4.4 — Agentic Development Metrics](../L4-standards-measurement.md#pattern-44--agentic-development-metrics)) and track it consistently.
+
+**Starter metrics:**
+- **Velocity:** Agent-driven cycle time per feature
+- **Quality:** Stack test pass rate on first run
+- **Autonomy:** Human intervention rate (how often a human must redirect an agent mid-task)
+- **Governance:** Constitutional rule violations caught by guardrails vs. caught in review
+
+**Measurement cadence:**
+- Track per-task (cycle time, intervention rate) and per-week (defect rate, drift counts)
+- Review metrics quarterly to identify trends and adjust practices
+
 ---
 
 ## Putting It All Together
@@ -1461,6 +1394,8 @@ pytest --collect-only --quiet
 - Restructure file layout by domain
 - Write CLAUDE.md (under 150 lines)
 - Establish worktree conventions
+- Establish documentation freshness practice (code + docs in same task)
+- Establish aggressive cleanup practice (remove dead code as you find it)
 - Audit: Can a new starter navigate?
 
 **Weeks 4-7: Phase 2 (L1 Feedback Loops)**
@@ -1481,20 +1416,19 @@ pytest --collect-only --quiet
 - Implement routing guardrails
 - Measure token savings
 
-**Week 13+: Phase 5 (L4 Culture)**
+**Week 13+: Phase 5 (L4 Standards & Measurement)**
 - Establish review checklists
-- Implement doc freshness workflow
-- Practice aggressive cleanup
 - Schedule periodic drift audits
 - Make New Starter Test part of onboarding
+- Define and track development metrics
 
 ### Key Success Factors
 
 1. **Incremental adoption:** Each phase delivers value independently
-2. **Team-wide participation:** L0 and L4 require whole-team buy-in
+2. **Team-wide participation:** L0 requires whole-team buy-in
 3. **Tooling investment:** L2 and L3 require upfront tooling work
-4. **Continuous practice:** L4 is not a one-time cleanup—it's ongoing
-5. **Measurement:** Track token savings, debugging time, and onboarding success
+4. **Continuous practice:** Doc freshness, cleanup, and drift detection are ongoing
+5. **Measurement:** Track token savings, debugging time, onboarding success, and agentic development metrics
 
 ### Common Pitfalls to Avoid
 
@@ -1503,7 +1437,7 @@ pytest --collect-only --quiet
 - Skip Phase 0 (assessment)
 - Defer documentation updates to "later"
 - Allow exceptions to constitutional rules
-- Treat cleanup as a quarterly sprint
+- Treat cleanup as a quarterly sprint (cleanup is continuous, not periodic)
 
 **Do:**
 - Start with L0 Foundation (highest ROI)
@@ -1520,5 +1454,5 @@ pytest --collect-only --quiet
 - [L1 Feedback Loops](../L1-feedback-loops.md) — Stack tests and assertions
 - [L2 Behavioral Guardrails](../L2-behavioral-guardrails.md) — Skills and hooks
 - [L3 Optimization](../L3-optimization.md) — Token efficiency
-- [L4 Culture](../L4-culture.md) — Documentation rigor and cleanup
+- [L4 Standards & Measurement](../L4-standards-measurement.md) — Evidence, drift detection, metrics
 - [Anti-Patterns](./anti-patterns.md) — Common mistakes to avoid

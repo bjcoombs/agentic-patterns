@@ -642,7 +642,7 @@ async function searchCode(query: string) {
 - Compound interest of technical debt
 
 **What To Do Instead**
-Apply [Pattern 4.1 — Documentation as Contract](../L4-culture.md#pattern-41--documentation-as-contract):
+Apply [Pattern 0.7 — Documentation as Contract](../L0-foundation.md#pattern-07--documentation-as-contract):
 - Code changes and doc updates happen in the SAME task
 - Never defer documentation to "later"
 - Every behavior change requires immediate doc update
@@ -723,7 +723,7 @@ Agent can proceed with confidence
 - Maintenance burden on code that doesn't run
 
 **What To Do Instead**
-Apply [Pattern 4.3 — Aggressive Cleanup](../L4-culture.md#pattern-43--aggressive-cleanup):
+Apply [Pattern 0.8 — Aggressive Cleanup](../L0-foundation.md#pattern-08--aggressive-cleanup):
 - Delete dead code immediately
 - Git history is your reference if you need it later
 - No commented-out code—delete it

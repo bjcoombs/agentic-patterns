@@ -634,3 +634,4 @@ This is the foundational principle behind stack tests. When an agent can spin up
 ---
 
 **Previous:** [L0: Foundation — Project Structure for AI Accessibility](L0-foundation.md) | **Next:** [L2: Behavioral Guardrails — Skills & Extensions](L2-behavioral-guardrails.md) | [Back to Overview](../README.md)
+

@@ -319,7 +319,7 @@ Classifying errors as "relevant" or "irrelevant" without evidence. Unless you ca
 ### Cross-References
 
 - @L1-feedback-loops.md#pattern-13-sequential--additive-test-design — Sequential test ordering
-- @L4-culture.md#pattern-42-evidence-based-claims — Evidence standards
+- @L4-standards-measurement.md#pattern-41--evidence-based-claims — Evidence standards
 
 ---
 
@@ -339,3 +339,4 @@ The skill chain's brain+ → plan+ phase operationalizes this insight. Fleshing 
 ---
 
 **Previous:** [L1: Feedback Loops — Closed-Loop Testing](L1-feedback-loops.md) | **Next:** [L3: Optimization — Token Efficiency & Agent Performance](L3-optimization.md) | [Back to Overview](../README.md)
+

@@ -1,76 +1,12 @@
-# L4 Culture — Rigor, Documentation & Maintenance
+# L4: Standards & Measurement
 
-L4 is the capstone layer that maintains the standards established by L0-L3. Where L0 defines the entry points and L1-L3 provide execution patterns, L4 ensures continuous quality through documentation rigor, evidence-based work, aggressive cleanup, drift detection, and the new starter standard.
+L4 is the maturity layer. Where L0 establishes foundations and L1-L3 provide execution patterns, L4 ensures those standards hold over time through evidence-based discipline, automated monitoring, periodic audits, and measurable outcomes.
 
-**Don't wait for L4 to start practicing L4.** While the pyramid implies a sequential adoption order, L4's practices — documentation freshness, aggressive cleanup of dead code and stale context noise, and iterative refinement — should begin on day one, alongside L0 foundation work. A project that postpones these practices accumulates debt from the start: docs written during initial setup that are already stale by the time L1 tests are added, dead code left behind from early prototyping, and context noise that slows every subsequent agent session. The habits formed in L4 are not a finishing phase — they are the hygiene that makes every other level sustainable.
-
----
-
-## Pattern 4.1 — Documentation as Contract
-
-### Problem
-
-Stale documentation is worse than no documentation. When docs are outdated, agents follow them with false confidence, leading to wasted tokens, incorrect implementations, and cascading errors. Documentation freshness is often treated as a one-time task rather than a continuous obligation.
-
-### Solution
-
-**Treat documentation as a living contract with the codebase.** When code changes, update the corresponding documentation in the SAME task—not deferred to "later." Every change that affects behavior must include a corresponding documentation update.
-
-The CLAUDE.md master index pattern (from L0.4) is the enforcement mechanism: documentation not linked from CLAUDE.md is orphaned and therefore dead. Link validation is part of the contract.
-
-**Key principles:**
-- **Synchronous updates:** Code changes and doc updates happen in the same task
-- **Reference integrity:** All docs must be reachable from CLAUDE.md via link chains
-- **Version-aware docs:** When patterns evolve, mark old versions as deprecated and link to current ones
-- **Example currency:** Code examples in docs must match the current codebase
-
-### In Practice
-
-**Before starting a task:**
-1. Read the relevant documentation sections
-2. Verify the examples match current code
-3. If docs are stale, flag it before proceeding
-
-**During implementation:**
-1. Make code changes
-2. IMMEDIATELY update affected docs
-3. Update CLAUDE.md links if structure changed
-4. Run link validation to catch orphans
-
-**Example task flow:**
-```
-Task: Refactor authentication flow
-
-1. Read L1/L2 patterns for auth
-2. Implement new auth logic
-3. Update L1/L2 pattern docs with new flow
-4. Update CLAUDE.md if patterns moved
-5. Verify: grep -r "old_auth_function" docs/
-6. Commit: Code + docs together
-```
-
-**Never defer:**
-- "I'll update the docs in a separate PR"
-- "The docs are close enough for now"
-- "I'll document this when the feature is complete"
-
-### Anti-Pattern
-
-- **"Good enough" documentation:** "The docs are roughly correct, the agent can figure it out."
-- **Deferred updates:** Making code changes and filing a doc ticket for "later."
-- **Orphaned content:** Writing docs that aren't linked from CLAUDE.md.
-- **Unverified examples:** Code snippets in docs that haven't been tested against current code.
-- **Zombie docs:** Keeping old versions around — delete superseded docs; version control is the archive.
-
-### Cross-References
-
-- **L0.4 — CLAUDE.md Master Index:** The linking and discovery mechanism
-- **Pattern 4.4 — Spec Drift Detection:** Automated checks for doc freshness
-- **Pattern 4.5 — The New Starter Standard:** Ultimate test for entry point clarity
+Documentation freshness and aggressive cleanup — often labeled "culture" practices — are not L4 concerns. They are L0 concerns. Documentation as Contract ([Pattern 0.7](L0-foundation.md#pattern-07--documentation-as-contract)) and Aggressive Cleanup ([Pattern 0.8](L0-foundation.md#pattern-08--aggressive-cleanup)) belong in the foundation layer because a stale constitution or a polluted codebase undermines every other pattern. L4 addresses what comes after the foundation is solid: verifying that practices work, detecting when they drift, and measuring their impact.
 
 ---
 
-## Pattern 4.2 — Evidence-Based Claims
+## Pattern 4.1 — Evidence-Based Claims
 
 ### Problem
 
@@ -154,109 +90,14 @@ Claim: The error existed before this commit. Changes in abc123 don't touch the r
 ### Cross-References
 
 - **L2.3 — Full-Loop Coverage:** Evidence is part of tertiary assertions
-- **Pattern 4.3 — Aggressive Cleanup:** Remove dead code that wastes verification tokens
-- **Pattern 4.4 — Spec Drift Detection:** Automated checks replace manual verification
+- [Pattern 0.8 — Aggressive Cleanup](L0-foundation.md#pattern-08--aggressive-cleanup): Remove dead code that wastes verification tokens
+- **Pattern 4.2 — Spec Drift Detection:** Automated checks replace manual verification
 
 ---
 
-## Pattern 4.3 — Aggressive Cleanup
+## Pattern 4.2 — Spec Drift Detection
 
-### Problem
-
-Dead code, unused imports, stale comments, and deprecated files accumulate over time. Every file an agent reads is context that could displace something important. Unused code is not harmless legacy—it's noise that degrades agent performance by consuming context window and creating confusion about what's actually used.
-
-### Solution
-
-**Treat cleanup as a continuous practice, not a quarterly sprint.** When you find dead code during a task, remove it as part of that task. Every task should leave the codebase cleaner than it found it.
-
-**Cleanup scope:**
-- **Unused imports:** Remove imports that aren't referenced
-- **Dead code:** Remove functions, classes, and methods that aren't called
-- **Stale comments:** Remove comments that duplicate the code or are outdated
-- **Deprecated files:** Remove files marked as deprecated or unused
-- **Superseded documentation:** Delete docs that no longer reflect the system — do not move them to an `archive/` directory. Version control preserves history; keeping stale docs pollutes context and creates ambiguity about what's current.
-- **TODO comments:** Either do the task or remove the TODO
-- **Debug code:** Remove print statements, debug logging, temporary files
-
-**Detection tools:**
-```bash
-# Unused imports (Python)
-$ ruff check --select F401
-
-# Dead code detection
-$ vulture myproject/
-
-# Find stale TODOs
-$ grep -r "TODO" --include="*.py" | grep "201[0-9]"  # Old TODOs
-
-# Find deprecated markers
-$ grep -r "deprecated" --include="*.py"
-```
-
-### In Practice
-
-**During any task:**
-1. Use the relevant file
-2. Notice dead code nearby
-3. Remove it as part of the same commit
-4. Verify nothing breaks (run tests)
-5. Note the cleanup in commit message
-
-**Example:**
-```
-Task: Fix authentication bug
-
-1. Open auth.py to fix bug
-2. Notice unused function: old_auth_method()
-3. Search codebase: grep -r "old_auth_method" → only definition found
-4. Remove function
-5. Run tests: pytest tests/auth/ → pass
-6. Commit: "Fix auth bug and remove unused old_auth_method"
-```
-
-**Targeted cleanup sessions:**
-```bash
-# Find and remove unused imports
-$ ruff check --select F401 --fix .
-
-# Find large comment blocks
-$ find . -name "*.py" -exec wc -l {} \; | sort -n | tail -20
-# Review top 20 files for excessive comments
-
-# Find stale files (not modified in 2+ years)
-$ find . -name "*.py" -mtime +730 -ls
-```
-
-**Commit message pattern:**
-```
-[Primary task description]
-
-Cleanup:
-- Remove unused imports in X files
-- Delete dead function: old_auth_method()
-- Remove stale TODO comments from 2023
-```
-
-### Anti-Pattern
-
-- **"Just in case" retention:** Keeping code "in case it's needed later."
-- **Commented-out code:** Leaving code in comments instead of deleting it.
-- **Defensive cleanup avoidance:** "Someone might be using this."
-- **Cleanup theater:** Removing a few imports but leaving major dead code.
-- **Deferred cleanup:** "I'll create a cleanup ticket for this."
-- **Archive directories:** Moving stale docs to `archive/` instead of deleting them — this creates ambiguity about what's current and pollutes context for agents searching the codebase.
-
-### Cross-References
-
-- **Pattern 4.2 — Evidence-Based Claims:** Verify cleanup doesn't break anything
-- **Pattern 4.4 — Spec Drift Detection:** Automated tools detect dead code
-- **L0.4 — CLAUDE.md Master Index:** Remove docs for deleted code
-
----
-
-## Pattern 4.4 — Spec Drift Detection
-
-![Spec Drift Detection Layers](diagrams/4.4-spec-drift-detection-layers.png)
+![Spec Drift Detection Layers](diagrams/4.2-spec-drift-detection-layers.png)
 
 ### Problem
 
@@ -360,19 +201,19 @@ Test drift: test_legacy_flow() references deleted function old_flow()
 
 - **"Close enough" tolerance:** Ignoring minor drift because "it's basically right."
 - **Deferred fixes:** Filing tickets for drift instead of fixing immediately.
-- **Partial updates:** Updating code but forgetting docs (violates 4.1).
+- **Partial updates:** Updating code but forgetting docs (violates [Pattern 0.7](L0-foundation.md#pattern-07--documentation-as-contract)).
 - **Zombie specs:** Keeping docs around for deleted features "for reference."
 - **Manual-only checks:** Relying on human review without automated detection.
 
 ### Cross-References
 
-- **Pattern 4.1 — Documentation as Contract:** Drift is contract violation
-- **Pattern 4.2 — Evidence-Based Claims:** Automated checks provide evidence
-- **Pattern 4.5 — The New Starter Standard:** Drift breaks new starter experience
+- [Pattern 0.7 — Documentation as Contract](L0-foundation.md#pattern-07--documentation-as-contract): Drift is contract violation
+- **Pattern 4.1 — Evidence-Based Claims:** Automated checks provide evidence
+- **Pattern 4.3 — New Starter Standard:** Drift breaks new starter experience
 
 ---
 
-## Pattern 4.5 — The New Starter Standard
+## Pattern 4.3 — New Starter Standard
 
 ### Problem
 
@@ -382,7 +223,7 @@ Projects accumulate implicit knowledge that exists only in team members' heads. 
 
 **The ultimate test: If someone with zero context cannot understand your project from CLAUDE.md + README + file structure alone, the project is not agentic-ready.**
 
-This is the standard that L4 maintains. It's the practical application of L0's entry point principles.
+This is the standard that L4 maintains. It's the practical application of L0's entry point principles ([Pattern 0.6](L0-foundation.md#pattern-06--ai-as-new-starter-standard)).
 
 **New starter test:**
 1. Clone the repository
@@ -467,9 +308,99 @@ Every documentation section should pass the zero-context test:
 
 ### Cross-References
 
-- **L0.4 — CLAUDE.md Master Index:** The foundation of discoverability
-- **Pattern 4.1 — Documentation as Contract:** Entry points ARE the contract
-- **Pattern 4.4 — Spec Drift Detection:** Audits catch entry point drift
+- [Pattern 0.4 — CLAUDE.md as Project Constitution](L0-foundation.md#pattern-04--claude-md-as-project-constitution): The foundation of discoverability
+- [Pattern 0.7 — Documentation as Contract](L0-foundation.md#pattern-07--documentation-as-contract): Entry points ARE the contract
+- **Pattern 4.2 — Spec Drift Detection:** Audits catch entry point drift
+
+---
+
+## Pattern 4.4 — Agentic Development Metrics
+
+### Problem
+
+Teams adopt agentic practices based on intuition and anecdote. Without measurement, they can't tell if the investment is paying off, where to focus next, or whether maturity is progressing. "We feel faster" is not evidence — it's optimism bias. Teams that don't measure can't improve systematically.
+
+### Solution
+
+**Establish a metrics framework that measures the outcomes agentic practices are designed to improve.** Metrics serve three purposes: validate that practices are working, identify where to focus next, and close the feedback loop on the practices themselves.
+
+This is not about tracking agent activity for its own sake. Tokens consumed, commands executed, and sessions started are activity metrics — they measure effort, not outcomes. The metrics that matter measure whether the codebase is getting better and whether agents are becoming more effective over time.
+
+**Maturity progression:**
+
+Agentic development matures through four stages. Each stage maps to the pattern pyramid:
+
+| Stage | Description | Pattern Foundation |
+|-------|-------------|-------------------|
+| **Foundational** | Agents handle bounded tasks with human oversight. Single-file changes, clear instructions, manual verification. | L0: Structure is navigable. Agent can find what it needs. |
+| **Orchestrated** | Multi-step workflows with agent-driven execution. Cross-file changes, test-first development, evidence-based completion. | L1-L2: Feedback loops catch errors. Guardrails prevent violations. |
+| **Self-optimizing** | Agents critique and revise their own work. Plan-execute-observe cycles. Memory of prior decisions. | L3: Efficient token use. Structured exploration. Smart routing. |
+| **Autonomous** | End-to-end delivery with governance guardrails. Multi-agent coordination. Metrics-driven process refinement. | L4: Standards hold over time. Drift is detected. Outcomes are measured. |
+
+A team doesn't "arrive" at a stage — different parts of the codebase may be at different maturity levels. The metrics framework identifies where to invest next.
+
+**Key metric categories:**
+
+**1. Velocity**
+- Agent-driven cycle time per feature (from task assignment to verified completion)
+- Task decomposition accuracy (how often the plan survives first execution without revision)
+- Stack test pass rate on first run (L1)
+
+**2. Quality**
+- Defect rate in agent-delivered code (bugs found after merge per feature)
+- Test coverage trend (stack tests covering new user journeys)
+- Architectural coherence (frequency of cross-cutting refactors to maintain module boundaries)
+
+**3. Agent autonomy**
+- Human intervention rate (how often a human must redirect or correct an agent mid-task)
+- Task completion without handoff (percentage of tasks completed in a single agent session)
+- Review rejection rate (percentage of agent PRs requiring significant revision)
+
+**4. Governance**
+- Constitutional rule violations caught by guardrails vs. caught in review
+- Spec drift detected (broken links, stale docs, orphaned tests) — tracked over time via [Pattern 4.2](#pattern-42--spec-drift-detection)
+- Rollback frequency (how often agent changes must be reverted)
+
+### In Practice
+
+**Getting started — don't measure everything at once:**
+
+Pick one metric from each category that matters most to your team. Track it for two weeks. If the data is noisy or hard to collect, pick a different metric. If it's clear and actionable, add more.
+
+```
+Starter set (one per category):
+- Velocity: Agent-driven cycle time per feature
+- Quality: Stack test pass rate on first run
+- Autonomy: Human intervention rate
+- Governance: Constitutional rule violations caught by guardrails
+```
+
+**Measurement cadence:**
+
+- **Per-task:** Cycle time, intervention rate, plan revision count
+- **Per-week:** Defect rate, review rejection rate, drift detection counts
+- **Per-quarter:** Maturity stage assessment, metric trend analysis, process refinement
+
+**Closing the loop:**
+
+Metrics that don't drive action are waste. For each metric, define:
+- **Threshold:** What value triggers concern? (e.g., human intervention rate above 30%)
+- **Action:** What do you do when the threshold is hit? (e.g., invest in better task scoping)
+- **Owner:** Who is responsible for acting on it?
+
+### Anti-Pattern
+
+- **Vanity metrics:** Tracking tokens consumed or commands executed — these measure activity, not outcomes.
+- **Measuring without acting:** Collecting data but not defining thresholds, actions, or owners.
+- **Gaming the metrics:** Optimizing for the metric rather than the outcome (e.g., reducing intervention rate by making tasks so trivial the agent never needs help).
+- **All-or-nothing:** Trying to measure everything from day one. Start with one metric per category.
+
+### Cross-References
+
+- [L1: Stack Tests](L1-feedback-loops.md): Pass rate on first run is a key quality signal
+- [L2: Behavioral Guardrails](L2-behavioral-guardrails.md): Guardrail violation rates are a governance signal
+- [L3: Optimization](L3-optimization.md): Token efficiency gains are measurable
+- **Pattern 4.1 — Evidence-Based Claims**: The evidence standard applies to metrics claims themselves
 
 ---
 
@@ -533,15 +464,14 @@ Adopt this checklist for code reviews, PR reviews, and task completion verificat
 
 ---
 
-## Summary: L4 as Continuous Quality
+## Summary: L4 as Standards & Measurement
 
-L4 is not a one-time cleanup—it's a continuous practice:
+L4 is the maturity layer — the practices that verify L0-L3 are holding and measure their impact:
 
-1. **Pattern 4.1 (Documentation as Contract):** Keep docs in sync with code, every time
-2. **Pattern 4.2 (Evidence-Based Claims):** Verify before claiming, show output
-3. **Pattern 4.3 (Aggressive Cleanup):** Remove dead code as you find it
-4. **Pattern 4.4 (Spec Drift Detection):** Automate drift checks, fix immediately
-5. **Pattern 4.5 (New Starter Standard):** Audit entry points, fix gaps
+1. **Pattern 4.1 (Evidence-Based Claims):** Verify before claiming, show output
+2. **Pattern 4.2 (Spec Drift Detection):** Automate drift checks, fix immediately
+3. **Pattern 4.3 (New Starter Standard):** Audit entry points, fix gaps
+4. **Pattern 4.4 (Agentic Development Metrics):** Measure outcomes, close the feedback loop
 
 **The review checklist is the enforcement mechanism.** Apply it to every task, every PR, every completion.
 
@@ -552,7 +482,7 @@ When L4 is practiced consistently, the codebase remains agentic-ready: clear, cl
 > "Peter strikes me as a software architect who keeps the high-level structure of his project in his head, deeply cares about architecture, tech debt, extensibility, modularity, and so on."
 > — Gergely Orosz, on Peter Steinberger's workflow
 
-L4 culture ensures that agentic development doesn't degrade project quality over time. Architecture, tech debt, and modularity require continuous attention — especially when agents are doing the implementation. Documentation rigor, evidence-based claims, and aggressive cleanup are what keep a project agentic-ready as it grows.
+Architecture, tech debt, and modularity require continuous attention — especially when agents are doing the implementation. L4 provides the standards and measurement to ensure that attention is systematic, not ad-hoc.
 
 ---
 

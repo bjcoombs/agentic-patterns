@@ -15,7 +15,7 @@ agentic-patterns/
 │   ├── L1-feedback-loops.md     # Stack tests, full-loop assertions
 │   ├── L2-behavioral-guardrails.md  # Skills, hooks, constitutional rules
 │   ├── L3-optimization.md       # Token efficiency, smart routing
-│   ├── L4-culture.md            # Rigor, docs, cleanup
+│   ├── L4-standards-measurement.md # Evidence, drift detection, metrics
 │   ├── cross-cutting/
 │   │   ├── anti-patterns.md
 │   │   ├── migration-guide.md
@@ -72,8 +72,8 @@ See @README.md for detailed project overview.
 **Optimization:**
 - @docs/L3-optimization.md — Token efficiency, smart routing, guardrail middleware
 
-**Culture:**
-- @docs/L4-culture.md — Rigor, documentation maintenance, cleanup standards
+**Standards & Measurement:**
+- @docs/L4-standards-measurement.md — Evidence-based claims, drift detection, metrics
 
 ## Cross-Cutting Guides
 

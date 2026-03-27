@@ -560,4 +560,4 @@ The scout pattern invests tokens in structured exploration before jumping to imp
 
 ---
 
-**Previous:** [L2: Behavioral Guardrails — Skills & Extensions](L2-behavioral-guardrails.md) | **Next:** [L4: Culture — Rigor, Documentation & Maintenance](L4-culture.md) | [Back to Overview](../README.md)
+**Previous:** [L2: Behavioral Guardrails — Skills & Extensions](L2-behavioral-guardrails.md) | **Next:** [L4: Standards & Measurement](L4-standards-measurement.md) | [Back to Overview](../README.md)

@@ -50,6 +50,32 @@ The worktree at `.worktrees/tg-dash/` demonstrates feature isolation:
 - No risk to main branch during experimental work
 - Clean slate for each feature branch
 
+### Documentation as Contract
+
+The project treats documentation as a living contract with the codebase. When code changes, docs update in the same task. DOCS commits at 13.5% of the total (172 of 1,276 non-merge commits) confirm this is not aspirational — it is practiced daily.
+
+### Documentation Health Tracking
+
+`docs/README.md` tracks coverage:
+
+```markdown
+**📅 Last Updated:** 2026-02-19 | **Coverage:** 92%
+```
+
+Coverage tracking ensures documentation freshness is visible and measurable, not assumed.
+
+### Plan Archival
+
+Completed plans are deleted once their work is merged. Version control preserves history — keeping stale plans in an `archive/` directory pollutes context and creates confusion about what's current. Agents don't need access to old plans; they need confidence that current docs reflect current reality.
+
+### Continuous Documentation Reorganization
+
+The docs structure evolves with the codebase. When `06-chat-system/` was added for multi-platform chat abstraction, superseded docs were deleted rather than archived. Version control preserves history — old docs left in `archive/` directories pollute context and create ambiguity about what's current. If a doc no longer reflects the system, delete it.
+
+### Aggressive Cleanup
+
+Dead code, stale comments, and superseded documentation are removed as they are encountered — not deferred to cleanup sprints. REFACTOR commits at 8.5% (108 of 1,276) show continuous quality maintenance distributed across the project's lifetime rather than concentrated in dedicated sprints.
+
 ---
 
 ## L1 in Practice — Feedback Loops
@@ -312,7 +338,7 @@ When `tdd+` is invoked, it knows to reject mocked loggers and mocked ethers beca
 
 ---
 
-## L4 in Practice — Culture
+## L4 in Practice — Standards & Measurement
 
 ### Evidence-Based Verification
 
@@ -351,24 +377,6 @@ FORBIDDEN: "This is a known issue, not caused by my work"
 
 Every error, warning, and failure must be addressed. Not "relevant" errors — ALL of them.
 
-### Documentation Health Tracking
-
-`docs/README.md` tracks coverage:
-
-```markdown
-**📅 Last Updated:** 2026-02-19 | **Coverage:** 92%
-```
-
-Documentation is treated as a living contract with the codebase. When code changes, docs update in the same task.
-
-### Plan Archival
-
-Completed plans are deleted once their work is merged. Version control preserves history — keeping stale plans in an `archive/` directory pollutes context and creates confusion about what's current. Agents don't need access to old plans; they need confidence that current docs reflect current reality.
-
-### Continuous Documentation Reorganization
-
-The docs structure evolves with the codebase. When `06-chat-system/` was added for multi-platform chat abstraction, superseded docs were deleted rather than archived. Version control preserves history — old docs left in `archive/` directories pollute context and create ambiguity about what's current. If a doc no longer reflects the system, delete it.
-
 ---
 
 ## Cross-Level Integration
@@ -387,7 +395,7 @@ Skills establish patterns that optimization (L3) can automate. Intent classifica
 
 ### How L4 Maintains L0-L2
 
-Evidence-based claims (L4) catch violations of constitutional rules (L0). Documentation health tracking (L4) catches drift in skill definitions (L2). The culture layer is the feedback loop that maintains all previous layers.
+Evidence-based claims (L4) catch violations of constitutional rules (L0). Documentation health tracking (L0.7) catches drift in skill definitions (L2). The standards layer is the feedback loop that maintains all previous layers.
 
 ---
 
@@ -403,7 +411,7 @@ Evidence-based claims (L4) catch violations of constitutional rules (L0). Docume
 
 5. **Documentation is a contract** — 92% coverage tracking and continuous reorganization treat docs as living artifacts. Superseded docs are deleted, not archived — version control preserves history.
 
-6. **All levels integrate** — L0 constitutional rules enable L1 stack tests, which provide targets for L2 skills, which L4 culture maintains.
+6. **All levels integrate** — L0 constitutional rules enable L1 stack tests, which provide targets for L2 skills, which L4 standards & measurement maintains.
 
 ---
 
@@ -445,9 +453,9 @@ February 2026 was the busiest period: 629 non-merge commits across 17 active day
 
 1. **Testing is a first-class output, not an afterthought** — 12.5% of commits are TEST, comparable to DOCS (13.5%). Test infrastructure received dedicated investment in November-December before the feature acceleration in January-February.
 
-2. **Documentation keeps pace with code** — DOCS commits at 13.5% indicate continuous documentation updates, consistent with the L4 documentation-as-contract pattern. Docs are not deferred to a separate phase.
+2. **Documentation keeps pace with code** — DOCS commits at 13.5% indicate continuous documentation updates, consistent with the L0 documentation-as-contract pattern. Docs are not deferred to a separate phase.
 
-3. **Refactoring is continuous** — 8.5% REFACTOR commits show ongoing code quality maintenance rather than periodic cleanup sprints. This aligns with L4 aggressive cleanup as a continuous practice.
+3. **Refactoring is continuous** — 8.5% REFACTOR commits show ongoing code quality maintenance rather than periodic cleanup sprints. This aligns with L0 aggressive cleanup as a continuous practice.
 
 4. **Bugfix rate is high but expected** — 15.8% BUGFIX commits reflect iterative development where bugs are found and fixed rapidly through the stack test feedback loop. The high diagnosticity of stack tests means bugs are caught early and fixed immediately (L2 zero-defect tolerance), rather than accumulating.
 

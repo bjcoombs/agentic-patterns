@@ -64,9 +64,9 @@ Alphabetical reference for specialized terms used across the agentic-patterns li
 ## E
 
 ### Evidence-Based Claim
-**Level**: L4 - Culture
+**Level**: L4 - Standards & Measurement
 **Definition**: Completion claim backed by actual command output showing verification results; "tests should pass" is not evidence.
-**See**: [Pattern 4.2 - Evidence-Based Claims](../L4-culture.md#pattern-42--evidence-based-claims)
+**See**: [Pattern 4.1 - Evidence-Based Claims](../L4-standards-measurement.md#pattern-41--evidence-based-claims)
 
 ---
 
@@ -114,9 +114,9 @@ Alphabetical reference for specialized terms used across the agentic-patterns li
 ## N
 
 ### New Starter Standard
-**Level**: L0 - Foundation, L4 - Culture
+**Level**: L0 - Foundation, L4 - Standards & Measurement
 **Definition**: Ultimate test where someone with zero context must be able to understand the project from CLAUDE.md + README + file structure alone.
-**See**: [Pattern 0.6 - AI-as-New-Starter Standard](../L0-foundation.md#pattern-06--ai-as-new-starter-standard) | [Pattern 4.5 - The New Starter Standard](../L4-culture.md#pattern-45--the-new-starter-standard)
+**See**: [Pattern 0.6 - AI-as-New-Starter Standard](../L0-foundation.md#pattern-06--ai-as-new-starter-standard) | [Pattern 4.3 - New Starter Standard](../L4-standards-measurement.md#pattern-43--new-starter-standard)
 
 ### No-Mock Philosophy
 **Level**: L1 - Feedback Loops
@@ -172,9 +172,9 @@ Alphabetical reference for specialized terms used across the agentic-patterns li
 **See**: [Pattern 3.1 - Smart Routing](../L3-optimization.md#pattern-31--smart-routing-tool-selection)
 
 ### Spec Drift
-**Level**: L4 - Culture
+**Level**: L4 - Standards & Measurement
 **Definition**: Misalignment between documentation, tests, and code that accumulates over time, creating confusion and wasting tokens as agents chase outdated specifications.
-**See**: [Pattern 4.4 - Spec Drift Detection](../L4-culture.md#pattern-44--spec-drift-detection)
+**See**: [Pattern 4.2 - Spec Drift Detection](../L4-standards-measurement.md#pattern-42--spec-drift-detection)
 
 ### Stack Test
 **Level**: L1 - Feedback Loops
@@ -222,4 +222,4 @@ Alphabetical reference for specialized terms used across the agentic-patterns li
 - **L1 Feedback Loops**: Stack testing and assertion patterns
 - **L2 Behavioral Guardrails**: Skills, hooks, and enforcement
 - **L3 Optimization**: Token efficiency and routing
-- **L4 Culture**: Documentation rigor and maintenance
+- **L4 Standards & Measurement**: Evidence, drift detection, metrics, maturity

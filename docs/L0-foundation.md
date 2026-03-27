@@ -47,7 +47,7 @@ export function parseAddress(...) { }               // internal
 
 **Anti-Pattern**: Creating "utils" files that export 20+ helper functions. If you can't describe what a module does in one sentence, it's too shallow.
 
-**Cross-References**: See [L2: Skills Framework](L2-behavioral-guardrails.md) for how skills enforce deep module boundaries during implementation. [L4: Culture](L4-culture.md) covers maintaining depth through aggressive cleanup.
+**Cross-References**: See [L2: Skills Framework](L2-behavioral-guardrails.md) for how skills enforce deep module boundaries during implementation. [Pattern 0.8 — Aggressive Cleanup](#pattern-08--aggressive-cleanup) covers maintaining depth through continuous cleanup.
 
 ---
 
@@ -99,7 +99,7 @@ project/
 
 **Anti-Pattern**: "Treasure hunt" structures where understanding one file requires reading 10 others scattered across the tree.
 
-**Cross-References**: [Pattern 0.3](#pattern-03--conceptual-file-organization) expands on grouping by domain. [L4: New Starter Standard](L4-culture.md) tests whether disclosure works for zero-context agents.
+**Cross-References**: [Pattern 0.3](#pattern-03--conceptual-file-organization) expands on grouping by domain. [L4: New Starter Standard](L4-standards-measurement.md) tests whether disclosure works for zero-context agents.
 
 ---
 
@@ -187,7 +187,7 @@ Every referenced doc must be reachable from CLAUDE.md — it serves as the maste
 
 **Anti-Pattern**: Writing tutorials or extensive guides in CLAUDE.md. Every line beyond 150 displaces context the agent needs for the actual task. Link to docs instead.
 
-**Cross-References**: [Pattern 0.6](#pattern-06--ai-as-new-starter-standard) tests whether CLAUDE.md succeeds. [L4: Documentation as Contract](L4-culture.md) covers keeping docs in sync with code.
+**Cross-References**: [Pattern 0.6](#pattern-06--ai-as-new-starter-standard) tests whether CLAUDE.md succeeds. [Pattern 0.7 — Documentation as Contract](#pattern-07--documentation-as-contract) covers keeping docs in sync with code.
 
 ---
 
@@ -237,7 +237,137 @@ Convention: `.worktrees/<branch-name>/` directory.
 
 **Anti-Pattern**: "They should just read the code." Code shows what exists, not why. AI agents need intent and structure, not just implementation.
 
-**Cross-References**: [Pattern 0.4](#pattern-04--claude-md-as-project-constitution) specifies CLAUDE.md format. [L4: New Starter Standard](L4-culture.md) covers maintaining this over time.
+**Cross-References**: [Pattern 0.4](#pattern-04--claude-md-as-project-constitution) specifies CLAUDE.md format. [L4: New Starter Audit](L4-standards-measurement.md#pattern-43--new-starter-standard) covers maintaining this over time.
+
+---
+
+## Pattern 0.7 — Documentation as Contract
+
+**Problem**: Stale documentation is worse than no documentation. When docs are outdated, agents follow them with false confidence, leading to wasted tokens, incorrect implementations, and cascading errors. Documentation freshness is often treated as a one-time task rather than a continuous obligation.
+
+**Solution**: **Treat documentation as a living contract with the codebase.** When code changes, update the corresponding documentation in the SAME task—not deferred to "later." Every change that affects behavior must include a corresponding documentation update.
+
+The CLAUDE.md master index pattern (from [Pattern 0.4](#pattern-04--claude-md-as-project-constitution)) is the enforcement mechanism: documentation not linked from CLAUDE.md is orphaned and therefore dead. Link validation is part of the contract.
+
+**Key principles:**
+- **Synchronous updates:** Code changes and doc updates happen in the same task
+- **Reference integrity:** All docs must be reachable from CLAUDE.md via link chains
+- **Version-aware docs:** When patterns evolve, mark old versions as deprecated and link to current ones
+- **Example currency:** Code examples in docs must match the current codebase
+
+**In Practice**:
+
+**Before starting a task:**
+1. Read the relevant documentation sections
+2. Verify the examples match current code
+3. If docs are stale, flag it before proceeding
+
+**During implementation:**
+1. Make code changes
+2. IMMEDIATELY update affected docs
+3. Update CLAUDE.md links if structure changed
+4. Run link validation to catch orphans
+
+**Example task flow:**
+```
+Task: Refactor authentication flow
+
+1. Read L1/L2 patterns for auth
+2. Implement new auth logic
+3. Update L1/L2 pattern docs with new flow
+4. Update CLAUDE.md if patterns moved
+5. Verify: grep -r "old_auth_function" docs/
+6. Commit: Code + docs together
+```
+
+**Never defer:**
+- "I'll update the docs in a separate PR"
+- "The docs are close enough for now"
+- "I'll document this when the feature is complete"
+
+**Anti-Pattern**: "Good enough" documentation ("the agent can figure it out"). Deferred updates (code changes + doc ticket for "later"). Orphaned content not linked from CLAUDE.md. Unverified examples. Zombie docs kept around — version control is the archive.
+
+**Cross-References**: [Pattern 0.4](#pattern-04--claude-md-as-project-constitution) establishes the master index mechanism. [Pattern 4.2 — Spec Drift Detection](L4-standards-measurement.md#pattern-42--spec-drift-detection) provides automated checks for doc freshness. [Pattern 4.3 — New Starter Standard](L4-standards-measurement.md#pattern-43--new-starter-standard) is the ultimate test for entry point clarity.
+
+---
+
+## Pattern 0.8 — Aggressive Cleanup
+
+**Problem**: Dead code, unused imports, stale comments, and deprecated files accumulate over time. Every file an agent reads is context that could displace something important. Unused code is not harmless legacy—it's noise that degrades agent performance by consuming context window and creating confusion about what's actually used.
+
+**Solution**: **Treat cleanup as a continuous practice, not a quarterly sprint.** When you find dead code during a task, remove it as part of that task. Every task should leave the codebase cleaner than it found it.
+
+**Cleanup scope:**
+- **Unused imports:** Remove imports that aren't referenced
+- **Dead code:** Remove functions, classes, and methods that aren't called
+- **Stale comments:** Remove comments that duplicate the code or are outdated
+- **Deprecated files:** Remove files marked as deprecated or unused
+- **Superseded documentation:** Delete docs that no longer reflect the system — do not move them to an `archive/` directory. Version control preserves history; keeping stale docs pollutes context and creates ambiguity about what's current.
+- **TODO comments:** Either do the task or remove the TODO
+- **Debug code:** Remove print statements, debug logging, temporary files
+
+**Detection tools:**
+```bash
+# Unused imports (Python)
+$ ruff check --select F401
+
+# Dead code detection
+$ vulture myproject/
+
+# Find stale TODOs
+$ grep -r "TODO" --include="*.py" | grep "201[0-9]"  # Old TODOs
+
+# Find deprecated markers
+$ grep -r "deprecated" --include="*.py"
+```
+
+**In Practice**:
+
+**During any task:**
+1. Use the relevant file
+2. Notice dead code nearby
+3. Remove it as part of the same commit
+4. Verify nothing breaks (run tests)
+5. Note the cleanup in commit message
+
+**Example:**
+```
+Task: Fix authentication bug
+
+1. Open auth.py to fix bug
+2. Notice unused function: old_auth_method()
+3. Search codebase: grep -r "old_auth_method" → only definition found
+4. Remove function
+5. Run tests: pytest tests/auth/ → pass
+6. Commit: "Fix auth bug and remove unused old_auth_method"
+```
+
+**Targeted cleanup sessions:**
+```bash
+# Find and remove unused imports
+$ ruff check --select F401 --fix .
+
+# Find large comment blocks
+$ find . -name "*.py" -exec wc -l {} \; | sort -n | tail -20
+# Review top 20 files for excessive comments
+
+# Find stale files (not modified in 2+ years)
+$ find . -name "*.py" -mtime +730 -ls
+```
+
+**Commit message pattern:**
+```
+[Primary task description]
+
+Cleanup:
+- Remove unused imports in X files
+- Delete dead function: old_auth_method()
+- Remove stale TODO comments from 2023
+```
+
+**Anti-Pattern**: "Just in case" retention. Commented-out code. Defensive cleanup avoidance ("someone might be using this"). Cleanup theater (removing a few imports but leaving major dead code). Deferred cleanup. Archive directories.
+
+**Cross-References**: [Pattern 4.1 — Evidence-Based Claims](L4-standards-measurement.md#pattern-41--evidence-based-claims) establishes the standard for verifying cleanup doesn't break anything. [Pattern 4.2 — Spec Drift Detection](L4-standards-measurement.md#pattern-42--spec-drift-detection) provides automated tools for detecting dead code. [Pattern 0.4](#pattern-04--claude-md-as-project-constitution) requires removing docs for deleted code.
 
 ---
 
@@ -246,7 +376,7 @@ Convention: `.worktrees/<branch-name>/` directory.
 - **L1: Feedback Loops** — Testing at module boundaries validates deep module design
 - **L2: Behavioral Guardrails** — Skills enforce structural conventions during implementation
 - **L3: Optimization** — Good structure reduces token overhead for navigation
-- **L4: Culture** — Maintains what L0 establishes through rigor and cleanup
+- **L4: Standards & Measurement** — Maturity practices: evidence-based discipline, drift detection, metrics
 
 ## Further Reading
 
