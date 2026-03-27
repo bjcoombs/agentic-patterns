@@ -437,42 +437,45 @@ The reference project's git history provides empirical evidence for how agentic 
 
 ![Commit Analysis Dashboard](../diagrams/commit-analysis-dashboard.png)
 
-### Commit Type Distribution (non-merge: 1,269 commits)
+### Commit Type Distribution (non-merge: 1,276 commits)
 
 | Type | Count | Share |
 |------|-------|-------|
-| FEATURE | 327 | 25.8% |
-| CHORE | 234 | 18.4% |
-| BUGFIX | 228 | 18.0% |
-| DOCS | 175 | 13.8% |
-| TEST | 168 | 13.2% |
-| REFACTOR | 119 | 9.4% |
-| CI | 14 | 1.1% |
-| SECURITY | 4 | 0.3% |
+| FEATURE | 297 | 23.3% |
+| CHORE | 219 | 17.2% |
+| BUGFIX | 201 | 15.8% |
+| DOCS | 172 | 13.5% |
+| TEST | 159 | 12.5% |
+| SECURITY | 110 | 8.6% |
+| REFACTOR | 108 | 8.5% |
+| CI | 10 | 0.8% |
 
 ### Feature-to-Test Ratio
 
-The overall feature-to-test ratio is 0.51x (one test commit for every two feature commits). This ratio varies significantly by month:
+The overall feature-to-test ratio is 0.54x (one test commit for every two feature commits). This ratio varies significantly by month:
 
-- **December 2025**: 2.50x (test-heavy — infrastructure and test framework buildout)
-- **January 2026**: 0.52x (balanced — steady feature development with testing)
-- **February 2026**: 0.31x (feature-heavy — peak development velocity)
+- **December 2025**: 2.71x (test-heavy — infrastructure and test framework buildout)
+- **January 2026**: 1.64x (balanced — steady feature development with testing)
+- **February 2026**: 0.33x (feature-heavy — peak development velocity)
+- **March 2026**: 0.52x (rebalancing — testing catches up after the February surge)
 
-The December spike reflects the upfront investment in testing infrastructure (StackTestUtils, container isolation, bootstrap system) that enabled the higher feature velocity in subsequent months.
+The November-December spike reflects the upfront investment in testing infrastructure (StackTestUtils, container isolation, bootstrap system) that enabled the higher feature velocity in subsequent months.
 
 ### Development Velocity
 
-February 2026 was the busiest period: 623 non-merge commits across 17 active days (36.6 commits/day average).
+February 2026 was the busiest period: 629 non-merge commits across 17 active days (37.0 commits/day average).
 
 ### What the Data Shows
 
-1. **Testing is a first-class output, not an afterthought** — 13.2% of commits are TEST, comparable to DOCS (13.8%). Test infrastructure received dedicated investment in December before the feature acceleration in January-February.
+1. **Testing is a first-class output, not an afterthought** — 12.5% of commits are TEST, comparable to DOCS (13.5%). Test infrastructure received dedicated investment in November-December before the feature acceleration in January-February.
 
-2. **Documentation keeps pace with code** — DOCS commits at 13.8% indicate continuous documentation updates, consistent with the L4 documentation-as-contract pattern. Docs are not deferred to a separate phase.
+2. **Documentation keeps pace with code** — DOCS commits at 13.5% indicate continuous documentation updates, consistent with the L4 documentation-as-contract pattern. Docs are not deferred to a separate phase.
 
-3. **Refactoring is continuous** — 9.4% REFACTOR commits show ongoing code quality maintenance rather than periodic cleanup sprints. This aligns with L4 aggressive cleanup as a continuous practice.
+3. **Refactoring is continuous** — 8.5% REFACTOR commits show ongoing code quality maintenance rather than periodic cleanup sprints. This aligns with L4 aggressive cleanup as a continuous practice.
 
-4. **Bugfix rate is high but expected** — 18.0% BUGFIX commits reflect iterative development where bugs are found and fixed rapidly through the stack test feedback loop. The high diagnosticity of stack tests means bugs are caught early and fixed immediately (L2 zero-defect tolerance), rather than accumulating.
+4. **Bugfix rate is high but expected** — 15.8% BUGFIX commits reflect iterative development where bugs are found and fixed rapidly through the stack test feedback loop. The high diagnosticity of stack tests means bugs are caught early and fixed immediately (L2 zero-defect tolerance), rather than accumulating.
 
-5. **CHORE commits reveal infrastructure investment** — 18.4% CHORE commits cover Docker configuration, dependency management, CI pipeline setup, and environment configuration. This overhead is the cost of running a full Docker stack for every test — the investment that makes stack tests possible.
+5. **Security is a significant concern** — 8.6% SECURITY commits reflect continuous attention to security in a financial application handling real funds and blockchain transactions. This is a domain-specific requirement that compounds with the zero-defect tolerance pattern.
+
+6. **CHORE commits reveal infrastructure investment** — 17.2% CHORE commits cover Docker configuration, dependency management, CI pipeline setup, and environment configuration. This overhead is the cost of running a full Docker stack for every test — the investment that makes stack tests possible.
 
