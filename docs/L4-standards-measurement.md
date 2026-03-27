@@ -360,10 +360,10 @@ Adopt this checklist for code reviews, PR reviews, and task completion verificat
 - [ ] Logs include sufficient context
 
 ### Full-Loop Coverage
-- [ ] Primary assertions: Core functionality verified (e.g., function returns correct output)
-- [ ] Secondary assertions: Side effects verified (e.g., file written, DB updated)
-- [ ] Tertiary assertions: Cleanup verified (e.g., connections closed, temp files deleted)
-- [ ] Failure cases tested (error paths, edge cases)
+- [ ] Primary assertions: User-facing behavior verified (e.g., order placed successfully)
+- [ ] Secondary assertions: Downstream effects verified (e.g., inventory updated, notification sent)
+- [ ] Tertiary assertions: Cross-functional verification (e.g., audit log written, email received)
+- [ ] Failure cases tested (error paths, edge cases, invalid input)
 
 ### Test Integrity
 - [ ] No conditional assertions (assert inside if/else)
@@ -398,13 +398,6 @@ Adopt this checklist for code reviews, PR reviews, and task completion verificat
 - [ ] No broken links in documentation
 - [ ] File paths in docs are accurate
 - [ ] Pattern names match implementation
-
-### New Starter Check (for PRs affecting entry points)
-- [ ] README is clear to strangers
-- [ ] Quick start example runs without issues
-- [ ] CLAUDE.md is a clear map
-- [ ] No undefined jargon in docs
-- [ ] Zero-context test passed
 
 ---
 
