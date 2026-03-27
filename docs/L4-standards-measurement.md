@@ -2,8 +2,6 @@
 
 L4 is the maturity layer. Where L0 establishes foundations and L1-L3 provide execution patterns, L4 ensures those standards hold over time through evidence-based discipline, automated monitoring, periodic audits, and measurable outcomes.
 
-Documentation freshness and aggressive cleanup — often labeled "culture" practices — are not L4 concerns. They are L0 concerns. Documentation as Contract ([Pattern 0.7](L0-foundation.md#pattern-07--documentation-as-contract)) and Aggressive Cleanup ([Pattern 0.8](L0-foundation.md#pattern-08--aggressive-cleanup)) belong in the foundation layer because a stale constitution or a polluted codebase undermines every other pattern. L4 addresses what comes after the foundation is solid: verifying that practices work, detecting when they drift, and measuring their impact.
-
 ---
 
 ## Pattern 4.1 — Evidence-Based Claims
@@ -217,92 +215,29 @@ Test drift: test_legacy_flow() references deleted function old_flow()
 
 ### Problem
 
-Projects accumulate implicit knowledge that exists only in team members' heads. New contributors struggle because onboarding documents assume context they don't have. The project becomes unapproachable for agents and humans alike.
+Projects accumulate implicit knowledge that exists only in team members' heads. New contributors — human or AI — struggle because onboarding documents assume context they don't have.
 
 ### Solution
 
-**The ultimate test: If someone with zero context cannot understand your project from CLAUDE.md + README + file structure alone, the project is not agentic-ready.**
+**The test: Can someone with zero context understand your project from CLAUDE.md + README + file structure alone?** If the answer is no to any of these — what it does, how to run it, where to add features, what patterns to follow, how to test changes — the entry points need work.
 
-This is the standard that L4 maintains. It's the practical application of L0's entry point principles ([Pattern 0.6](L0-foundation.md#pattern-06--ai-as-new-starter-standard)).
-
-**New starter test:**
-1. Clone the repository
-2. Read only: README.md, CLAUDE.md, and docs linked from CLAUDE.md
-3. Can you answer these questions?
-   - What does this project do?
-   - How do I run it locally?
-   - Where do I add a new feature?
-   - What patterns should I follow?
-   - How do I test my changes?
-   - Who do I ask for help?
-
-If the answer is "no" to any question, the entry points need work.
+This is the practical application of [Pattern 0.6](L0-foundation.md#pattern-06--ai-as-new-starter-standard), maintained as a periodic audit in L4.
 
 ### In Practice
 
-**Periodic audits (quarterly or per major change):**
-```bash
-# Simulate new starter experience
-1. Fresh clone of repo
-2. Read README.md
-3. Read CLAUDE.md and linked docs
-4. Try to: run tests, add a feature, build the project
-5. Document every assumption you had to make
-6. Fix entry points to eliminate assumptions
-```
+**Audit checklist (quarterly or per major change):**
+- [ ] README explains the project in under 30 seconds
+- [ ] Quick start runs without reading beyond README
+- [ ] CLAUDE.md is a clear map, not a wall of links
+- [ ] Pattern docs have examples that run out of the box
+- [ ] Directory structure communicates intent
 
-**Audit checklist:**
-- [ ] **README clarity:** Can a stranger understand what this project does in 30 seconds?
-- [ ] **Quick start:** Can they run "hello world" without reading beyond README?
-- [ ] **CLAUDE.md structure:** Is it a clear map or a wall of links?
-- [ ] **Pattern docs:** Do L1/L2/L3 docs have examples that run out of the box?
-- [ ] **File organization:** Does the directory structure communicate intent?
-- [ ] **Onboarding gaps:** What questions would you ask if you joined today?
-
-**Example improvements from audits:**
-
-*Before:*
-```markdown
-# MyProject
-
-See CLAUDE.md for documentation.
-```
-
-*After:*
-```markdown
-# MyProject
-
-**What it does:** Transforms CSV data into SQL tables with automatic type inference.
-
-**Quick start:**
-```bash
-pip install -e .
-python examples/hello.py
-```
-
-**Documentation:**
-- CLAUDE.md — Project map and patterns
-- L1-basics.md — Core concepts (start here)
-- examples/ — Runnable examples
-
-**Next steps:**
-1. Read L1-basics.md for core patterns
-2. Run examples/hello.py to verify installation
-3. Check examples/ for common tasks
-```
-
-**The "zero context" rule:**
-Every documentation section should pass the zero-context test:
-- Does it reference undefined terms?
-- Does it assume prior knowledge of the project?
-- Does it use "we" language that implies existing team membership?
-- Does it have examples that rely on unstated setup?
+**The "zero context" rule:** Every doc section must pass this test — no undefined terms, no assumed prior knowledge, no "we" language implying existing team membership, no examples relying on unstated setup.
 
 ### Anti-Pattern
 
 - **Insider documentation:** "You know, the thing we discussed in the meeting."
 - **Assumed knowledge:** "Just follow the pattern we always use" (without linking to it).
-- **Incomplete onboarding:** "Read the whole docs folder" (without a guide).
 - **Stale quick starts:** Examples that don't run because of missing steps.
 - **Missing "why":** Explaining "how" but not "why" (agents need intent).
 
@@ -322,7 +257,7 @@ Teams adopt agentic practices based on intuition and anecdote. Without measureme
 
 ### Solution
 
-**Establish a metrics framework that measures the outcomes agentic practices are designed to improve.** Metrics serve three purposes: validate that practices are working, identify where to focus next, and close the feedback loop on the practices themselves.
+**Establish metrics that measure the outcomes agentic practices are designed to improve.** Metrics serve three purposes: validate that practices are working, identify where to focus next, and close the feedback loop on the practices themselves.
 
 This is not about tracking agent activity for its own sake. Tokens consumed, commands executed, and sessions started are activity metrics — they measure effort, not outcomes. The metrics that matter measure whether the codebase is getting better and whether agents are becoming more effective over time.
 
@@ -332,10 +267,10 @@ Agentic development matures through four stages. Each stage maps to the pattern 
 
 | Stage | Description | Pattern Foundation |
 |-------|-------------|-------------------|
-| **Foundational** | Agents handle bounded tasks with human oversight. Single-file changes, clear instructions, manual verification. | L0: Structure is navigable. Agent can find what it needs. |
-| **Orchestrated** | Multi-step workflows with agent-driven execution. Cross-file changes, test-first development, evidence-based completion. | L1-L2: Feedback loops catch errors. Guardrails prevent violations. |
-| **Self-optimizing** | Agents critique and revise their own work. Plan-execute-observe cycles. Memory of prior decisions. | L3: Efficient token use. Structured exploration. Smart routing. |
-| **Autonomous** | End-to-end delivery with governance guardrails. Multi-agent coordination. Metrics-driven process refinement. | L4: Standards hold over time. Drift is detected. Outcomes are measured. |
+| **Foundational** | Agents handle bounded tasks with human oversight. Single-file changes, clear instructions, manual verification. No production data in prompts. | L0: Structure is navigable. Agent can find what it needs. |
+| **Orchestrated** | Multi-agent workflows: task decomposition, cross-file changes, test-first development, evidence-based completion. Cross-repo awareness. Governance policies in place. | L1-L2: Feedback loops catch errors. Guardrails prevent violations. |
+| **Self-optimizing** | Agents critique and revise their own work. Plan-execute-observe cycles. Memory of prior decisions and failure modes. Propose refactors with architectural alignment. | L3: Efficient token use. Structured exploration. Smart routing. |
+| **Autonomous** | End-to-end delivery with governance guardrails. Multi-agent coordination across domains. Metrics-driven process refinement. Continuous improvement loops. | L4: Standards hold over time. Drift is detected. Outcomes are measured. |
 
 A team doesn't "arrive" at a stage — different parts of the codebase may be at different maturity levels. The metrics framework identifies where to invest next.
 
@@ -343,23 +278,24 @@ A team doesn't "arrive" at a stage — different parts of the codebase may be at
 
 **1. Velocity**
 - Agent-driven cycle time per feature (from task assignment to verified completion)
-- Task decomposition accuracy (how often the plan survives first execution without revision)
-- Stack test pass rate on first run (L1)
+- Task decomposition accuracy — how often the plan survives first execution without revision
+- Stack test pass rate on first run ([L1](L1-feedback-loops.md))
 
 **2. Quality**
 - Defect rate in agent-delivered code (bugs found after merge per feature)
 - Test coverage trend (stack tests covering new user journeys)
-- Architectural coherence (frequency of cross-cutting refactors to maintain module boundaries)
+- Architectural coherence — frequency of cross-cutting refactors needed to maintain module boundaries
 
 **3. Agent autonomy**
-- Human intervention rate (how often a human must redirect or correct an agent mid-task)
-- Task completion without handoff (percentage of tasks completed in a single agent session)
-- Review rejection rate (percentage of agent PRs requiring significant revision)
+- Human intervention rate — how often a human must redirect or correct an agent mid-task
+- Task completion without handoff — percentage of tasks completed in a single agent session
+- Review rejection rate — percentage of agent PRs requiring significant revision
 
 **4. Governance**
 - Constitutional rule violations caught by guardrails vs. caught in review
-- Spec drift detected (broken links, stale docs, orphaned tests) — tracked over time via [Pattern 4.2](#pattern-42--spec-drift-detection)
-- Rollback frequency (how often agent changes must be reverted)
+- Spec drift detected — broken links, stale docs, orphaned tests — tracked over time via [Pattern 4.2](#pattern-42--spec-drift-detection)
+- Rollback frequency — how often agent changes must be reverted
+- Audit completeness — percentage of agent changes with full evidence trail
 
 ### In Practice
 
@@ -387,6 +323,14 @@ Metrics that don't drive action are waste. For each metric, define:
 - **Threshold:** What value triggers concern? (e.g., human intervention rate above 30%)
 - **Action:** What do you do when the threshold is hit? (e.g., invest in better task scoping)
 - **Owner:** Who is responsible for acting on it?
+
+**Gate criteria for maturity stage transitions:**
+
+Each stage has observable gates — not arbitrary timelines:
+
+- **Foundational → Orchestrated:** A medium-sized feature (2-5 files) completes end-to-end with agent-driven flow and passes CI
+- **Orchestrated → Self-optimizing:** Agents autonomously propose and run safe plans, requiring human review only for critical-path or security changes
+- **Self-optimizing → Autonomous:** Organization-wide adoption in at least one major product area, with documented safety nets, rollback plans, and cost governance
 
 ### Anti-Pattern
 
