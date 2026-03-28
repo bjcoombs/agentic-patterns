@@ -1,6 +1,6 @@
 # L1 Closed Loop Design and Verification
 
-**Level 1** in the agentic patterns hierarchy: the level where agents stop guessing and start designing. L0 provides navigable structure — deep modules, progressive disclosure, CLAUDE.md as constitution. L1 is where the agent uses that structure to gather evidence, form hypotheses, propose architectural changes, and validate the result through closed-loop verification.
+**Level 1** in the agentic patterns hierarchy: the level where agents stop guessing and start designing. L0 provides navigable structure — deep modules, progressive disclosure, CLAUDE.md as constitution, unit tests as contract. L1 is where the agent uses that structure to gather evidence, form hypotheses, propose architectural changes, and validate the result through closed-loop verification.
 
 The "closed loop" is design→implement→verify→confirm, not just test→fix→test. Stack tests are the validation mechanism that closes the loop — they confirm that the design intent was implemented correctly. But the design comes first. Every plan, every bugfix, every investigation begins with harvesting the right context: understanding what the system does, what it should do, and what evidence supports the proposed change.
 
@@ -140,6 +140,18 @@ For **large, sprawling existing systems**, full adoption may not be immediately 
 In these cases, the stack-test approach can still be applied **incrementally**: identify the highest-value subsystems, extract them behind clean API boundaries, and stack-test those boundaries. The goal is to expand coverage over time, not to boil the ocean on day one.
 
 The key insight: stack-first development is an architectural decision, not just a testing strategy. It shapes how you design services, define boundaries, and manage dependencies. Starting greenfield with this approach is straightforward. Retrofitting onto brownfield systems requires patience and incremental extraction — but the principles remain the same.
+
+### Stack Test Brittleness and Reconciliation
+
+Stack tests have their limits. The further and deeper into a user journey sequence a test reaches, the more reasons exist for it to fail — and the harder it becomes to distinguish a real regression from a test that's exercising too many concerns at once. A test that verifies authentication, order creation, payment processing, fulfillment, notification, and audit logging in a single journey is brittle by construction: any one of those layers breaking causes the whole test to fail, and the diagnostic signal degrades with each added concern.
+
+When stack tests become brittle in this way, the remedy is not to remove coverage but to **reconcile the test design**. Ask the agent to scan all stack tests for the affected domain area, then brainstorm a plan to produce a cleaner, simpler, and more reliable test structure that covers the same functionality. The reconciliation optimizes along three axes:
+
+- **De-duplicate**: Remove overlapping assertions across tests that verify the same side effect through different journeys
+- **Group logically**: Restructure tests so each journey exercises a coherent set of concerns rather than spanning every layer in the system
+- **Improve reliability**: Reduce the surface area that each test depends on, so failures point to specific subsystems rather than the entire stack
+
+This is a continuous maintenance activity, not a one-time fix. As the system grows, stack tests that were clean at inception accumulate scope. Periodic reconciliation keeps the test suite diagnostic rather than brittle.
 
 ### Health Endpoint Test Mode
 
