@@ -121,6 +121,10 @@ Run sequentially, each test building confidence in layers. If `01-app-startup` f
 | Typical Use | Algorithm correctness | Component interaction | System behavior, user journeys | Critical paths, smoke tests |
 | Runs Locally | Always | Usually | Must — Docker only | Often requires cloud/staging |
 
+### Beyond API Testing
+
+Stack tests are not limited to driving backend APIs directly. For web applications, the same pattern applies with a browser automation layer like Playwright: spin up the full stack, then drive user journeys through the actual UI — form submissions, page transitions, rendered output — to verify that the combined frontend and backend work correctly end-to-end. The principle remains the same: real system, real dependencies, no mocks. Only the entry point changes from HTTP API calls to browser interactions.
+
 ### Anti-Pattern
 
 **Don't** write "integration tests" that start a few services and mock others. You end up testing your mocks, not your system. Either test at the unit level (fast, isolated) or at the stack level (complete, real). The middle ground gives you the worst of both worlds: slow tests that don't prove anything.
@@ -139,7 +143,7 @@ For **large, sprawling existing systems**, full adoption may not be immediately 
 
 In these cases, the stack-test approach can still be applied **incrementally**: identify the highest-value subsystems, extract them behind clean API boundaries, and stack-test those boundaries. The goal is to expand coverage over time, not to boil the ocean on day one.
 
-The key insight: stack-first development is an architectural decision, not just a testing strategy. It shapes how you design services, define boundaries, and manage dependencies. Starting greenfield with this approach is straightforward. Retrofitting onto brownfield systems requires patience and incremental extraction — but the principles remain the same.
+The key insight: stack-first development is an architectural decision, not just a testing strategy. It shapes how you design services, define boundaries, and manage dependencies. Starting greenfield with this approach is straightforward. Retrofitting onto brownfield systems follows the **Ratchet pattern**: incremental extraction that only tightens, never loosens. Each subsystem brought under stack testing stays there — coverage ratchets forward one boundary at a time.
 
 ### Stack Test Brittleness and Reconciliation
 
