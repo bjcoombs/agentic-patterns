@@ -186,6 +186,7 @@ Stack tests need realistic data to exercise user journeys. A user can't place an
 The bootstrap step (typically `02-bootstrap-test-data.stack.test.ts`) runs after the startup test and before domain tests. It loads the prerequisite data that domain journeys need: products in the catalog, pre-configured users, reference data, and system settings.
 
 **Bootstrap principles:**
+
 - Use the same internal service APIs that user-facing or admin functions use — bootstrap goes through the same code paths as production, not synthetic test-only endpoints that would never exist in a real deployment
 - Direct database seeding is acceptable for bootstrapping, but it must use the same internal service layer and data access patterns the application uses — not raw SQL that bypasses validation, hooks, or business logic
 - Each bootstrap test creates one category of fixture data — products, users, configuration
@@ -716,4 +717,3 @@ This is the foundational principle behind stack tests. When an agent can spin up
 ---
 
 **Previous:** [L0: Foundation — Project Structure for AI Accessibility](L0-foundation.md) | **Next:** [L2: Behavioral Guardrails — Skills & Extensions](L2-behavioral-guardrails.md) | [Back to Overview](../README.md)
-

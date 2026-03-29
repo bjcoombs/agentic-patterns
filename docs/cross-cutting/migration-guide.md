@@ -34,24 +34,28 @@ This guide helps teams transition from traditional software development practice
 Run through this checklist to identify gaps:
 
 #### Entry Points
+
 - [ ] CLAUDE.md exists and is under 150 lines
 - [ ] README.md clearly explains what the project does
 - [ ] CLAUDE.md links to all relevant documentation
 - [ ] File structure is grouped by domain, not layer
 
 #### Testing
+
 - [ ] Integration tests use real components (no mocks for owned services)
 - [ ] Tests run in isolated environments (no shared state)
 - [ ] Test failures provide clear diagnostic signals
 - [ ] Tests assert on side effects, not just responses
 
 #### Documentation
+
 - [ ] Every pattern is documented with examples
 - [ ] Code examples in docs match current codebase
 - [ ] Documentation is linked from CLAUDE.md
 - [ ] No orphaned docs (all reachable from master index)
 
 #### Tooling
+
 - [ ] Git worktrees are used for feature branches
 - [ ] Linting/formatting is automated
 - [ ] Pre-commit hooks enforce basic rules
@@ -64,6 +68,7 @@ Run through this checklist to identify gaps:
 **Procedure:**
 
 1. **Fresh clone simulation**
+
    ```bash
    # Clone your repo to a temporary location
    git clone <your-repo> /tmp/test-agentic-readiness
@@ -173,6 +178,7 @@ Migration Roadmap:
 **Solution:** Group by domain or capability.
 
 **Before (layer-based):**
+
 ```
 src/
 ├── services/
@@ -191,6 +197,7 @@ src/
 ```
 
 **After (domain-based):**
+
 ```
 src/
 ├── ecommerce/
@@ -223,6 +230,7 @@ src/
    - `utils/pricing.ts` → `ecommerce/utils/pricing.ts`
 
 4. **Update imports** across the codebase
+
    ```bash
    # Find all imports and update paths
    grep -r "from.*services/" src/
@@ -404,6 +412,7 @@ git worktree remove .worktrees/feature-branch-name
 ```
 
 **Why:** Prevents conflicts, provides clean slate for each task.
+
 ```
 
 ### Step 5: Audit — Can a New Starter Navigate?
@@ -460,7 +469,8 @@ git worktree remove .worktrees/feature-branch-name
    mkdir -p tests/stack
    ```
 
-2. **Create test utilities:**
+1. **Create test utilities:**
+
    ```typescript
    // tests/stack/utils/stack.ts
    export async function startStack(testName: string) {
@@ -503,7 +513,8 @@ git worktree remove .worktrees/feature-branch-name
    }
    ```
 
-3. **Create Docker Compose generator:**
+2. **Create Docker Compose generator:**
+
    ```typescript
    // tests/stack/utils/compose.ts
    export function generateComposeFile(
@@ -775,7 +786,9 @@ expect(response.status).toBe(200);
 ```
 
 ### 2. Catch Without Rethrow
+
 **Bad:**
+
 ```javascript
 try {
   await riskyOperation();
@@ -785,28 +798,35 @@ try {
 ```
 
 **Fix:**
+
 ```javascript
 await expect(riskyOperation()).resolves.not.toThrow();
 ```
 
 ### 3. Optional Chaining on Expect
+
 **Bad:** `expect(res?.data).toBeDefined();`
 **Fix:**
+
 ```typescript
 expect(res).toBeDefined();
 expect(res.data).toBeDefined();
 ```
 
 ### 4. Early Returns Before Assertions
+
 **Bad:** `if (!user) return; expect(user.email).toContain('@');`
 **Fix:**
+
 ```typescript
 expect(user).toBeDefined();
 expect(user.email).toContain('@');
 ```
 
 ### 5. Try-Catch Wrapped Expectations
+
 **Bad:**
+
 ```typescript
 try {
   expect(actual).toBe(expected);
@@ -816,6 +836,7 @@ try {
 ```
 
 **Fix:**
+
 ```typescript
 expect(actual).toBe(expected);
 ```
@@ -827,6 +848,7 @@ expect(actual).toBe(expected);
 3. Report each violation with line number
 4. Suggest correct alternative
 5. Do not allow test to proceed until violations are fixed
+
 ```
 
 **Usage:**
@@ -873,6 +895,7 @@ Claim: <what the output proves>
 ## Enforcement
 
 When you see a claim without evidence:
+
 1. Stop the agent
 2. Request verification command
 3. Require actual output
@@ -884,6 +907,7 @@ When you see a claim without evidence:
 > "Tests should pass now"
 
 **Good:**
+
 ```bash
 $ pytest tests/auth.py -v
 
@@ -892,6 +916,7 @@ tests/auth.py::test_logout PASSED
 
 Claim: All authentication tests pass. Login and logout paths work correctly.
 ```
+
 ```
 
 ### Step 3: Set Up PreToolUse Hooks to Block Destructive Operations
@@ -1305,30 +1330,35 @@ claude "Find all functions that call processPayment"
 **Audit checklist:**
 
 **Link integrity (automated):**
+
 ```bash
 # Check all docs linked from CLAUDE.md are reachable
 ./scripts/check_docs_links.sh
 ```
 
 **Stale file detection (automated):**
+
 ```bash
 # Find docs not updated in 6+ months
 find docs -name "*.md" -mtime +180 -ls
 ```
 
 **Test-to-code alignment (automated):**
+
 ```bash
 # Tests reference non-existent functions
 pytest --collect-only --quiet
 ```
 
 **Doc-to-code consistency (manual):**
+
 - Code examples in docs match actual code syntax
 - Pattern names match current implementation
 - File paths referenced in docs exist
 - Behavior descriptions match current implementation
 
 **Remediation workflow:**
+
 1. Detection tool identifies drift
 2. Categorize: code drift or doc drift
 3. Fix: Either update code or update docs
@@ -1354,11 +1384,13 @@ pytest --collect-only --quiet
 5. **Report gaps** to the team
 
 **Team action:**
+
 - Review gaps reported by new starters
 - Update CLAUDE.md or linked docs to address gaps
 - Iterate until new starters can onboard without asking questions
 
 **Quarterly audit:**
+
 - Even if no new team members joined, run the New Starter Test quarterly
 - Prevents accumulated implicit knowledge
 - Ensures entry points remain clear
@@ -1370,12 +1402,14 @@ pytest --collect-only --quiet
 **Solution:** Pick one metric from each category ([Pattern 4.4 — Agentic Development Metrics](../L4-standards-measurement.md#pattern-44--agentic-development-metrics)) and track it consistently.
 
 **Starter metrics:**
+
 - **Velocity:** Agent-driven cycle time per feature
 - **Quality:** Stack test pass rate on first run
 - **Autonomy:** Human intervention rate (how often a human must redirect an agent mid-task)
 - **Governance:** Constitutional rule violations caught by guardrails vs. caught in review
 
 **Measurement cadence:**
+
 - Track per-task (cycle time, intervention rate) and per-week (defect rate, drift counts)
 - Review metrics quarterly to identify trends and adjust practices
 
@@ -1386,11 +1420,13 @@ pytest --collect-only --quiet
 ### Migration Timeline
 
 **Week 1: Phase 0 (Assessment)**
+
 - Run New Starter Test
 - Identify gaps using pyramid levels
 - Create prioritized roadmap
 
 **Weeks 2-3: Phase 1 (L0 Foundation)**
+
 - Restructure file layout by domain
 - Write CLAUDE.md (under 150 lines)
 - Establish worktree conventions
@@ -1399,24 +1435,28 @@ pytest --collect-only --quiet
 - Audit: Can a new starter navigate?
 
 **Weeks 4-7: Phase 2 (L1 Closed Loop Design)**
+
 - Add stack test infrastructure
 - Implement app-startup test
 - Add sequential tests for core flows
 - Implement full-loop assertions
 
 **Weeks 8-10: Phase 3 (L2 Guardrails)**
+
 - Create test-integrity skill
 - Add verify+ skill
 - Set up PreToolUse/PostToolUse hooks
 - Enforce constitutional rules
 
 **Weeks 11-12: Phase 4 (L3 Optimization)**
+
 - Set up jcodemunch
 - Create intent classification
 - Implement routing guardrails
 - Measure token savings
 
 **Week 13+: Phase 5 (L4 Standards & Measurement)**
+
 - Establish review checklists
 - Schedule periodic drift audits
 - Make New Starter Test part of onboarding
@@ -1433,6 +1473,7 @@ pytest --collect-only --quiet
 ### Common Pitfalls to Avoid
 
 **Don't:**
+
 - Try to implement all phases at once
 - Skip Phase 0 (assessment)
 - Defer documentation updates to "later"
@@ -1440,6 +1481,7 @@ pytest --collect-only --quiet
 - Treat cleanup as a quarterly sprint (cleanup is continuous, not periodic)
 
 **Do:**
+
 - Start with L0 Foundation (highest ROI)
 - Implement incrementally based on priority
 - Update docs in the same task as code changes

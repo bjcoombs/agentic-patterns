@@ -46,6 +46,7 @@ ecommerce-app/
 ```
 
 **Problems**:
+
 - Related code scattered across `services/`, `handlers/`, `utils/`, `types/`
 - Can't find all order processing logic in one place
 - File paths don't indicate domain
@@ -93,6 +94,7 @@ ecommerce-app/
 ```
 
 **Improvements**:
+
 - Each domain self-contained
 - Deep modules: simple `index.ts` facades hide implementation
 - Progressive disclosure: domain → module → implementation
@@ -133,6 +135,7 @@ ecommerce_bot/
 ```
 
 **Problems**:
+
 - 20+ files at root — no structure
 - No indication of which files belong together
 - `utils.py` and `constants.py` become dumping grounds
@@ -182,6 +185,7 @@ ecommerce_bot/
 ```
 
 **Improvements**:
+
 - Clear domain boundaries
 - `__init__.py` exports controlled public interface
 - Related code co-located

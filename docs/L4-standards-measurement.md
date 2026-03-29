@@ -15,6 +15,7 @@ Agents make claims without backing them with evidence. "Tests should pass" is no
 **The verify+ pattern:** Run the commands, show the output, then make the claim. Every completion claim must be backed by actual command output.
 
 **Evidence format template:**
+
 ```bash
 # Step 1: Run verification command
 $ <command>
@@ -27,6 +28,7 @@ Claim: <what the output proves>
 ```
 
 **Claims that REQUIRE evidence:**
+
 - "Tests pass" → Show test output
 - "Build succeeds" → Show build log
 - "Function works" → Show example execution
@@ -36,12 +38,14 @@ Claim: <what the output proves>
 ### In Practice
 
 **Bad claims:**
+
 - "Tests should pass now" → No verification
 - "This failure is unrelated" → No investigation
 - "This warning was pre-existing" → No baseline check
 - "The function works correctly" → No execution shown
 
 **Good claims:**
+
 ```bash
 $ pytest tests/test_auth.py -v
 
@@ -53,6 +57,7 @@ Claim: All authentication tests pass. The login, token refresh, and error handli
 ```
 
 **Before/after evidence:**
+
 ```bash
 # Before: Bug reproduction
 $ python -c "from mymodule import broken_func; broken_func()"
@@ -66,6 +71,7 @@ Claim: The division-by-zero bug is fixed. Function now handles edge cases correc
 ```
 
 **Evidence for negative claims:**
+
 ```bash
 # Claim: "This error is pre-existing"
 $ git log --oneline -1
@@ -108,6 +114,7 @@ Documentation, tests, and code drift apart over time. A pattern documented in L1
 **Detection layers:**
 
 **1. Link integrity (automated)**
+
 ```bash
 # Check all docs linked from CLAUDE.md are reachable
 $ find docs -name "*.md" -exec grep -l "\[.*\](.*\.md)" {} \; | \
@@ -123,6 +130,7 @@ $ find docs -name "*.md" -exec grep -l "\[.*\](.*\.md)" {} \; | \
 ```
 
 **2. Stale file detection (automated)**
+
 ```bash
 # Find docs not updated in 6+ months
 $ find docs -name "*.md" -mtime +180 -ls
@@ -132,6 +140,7 @@ $ grep -r "Last updated: 202[0-9]" docs/
 ```
 
 **3. Test-to-code alignment (automated)**
+
 ```bash
 # Tests reference non-existent functions
 $ pytest --collect-only | while read line; do
@@ -143,6 +152,7 @@ done
 ```
 
 **4. Doc-to-code consistency (manual checklist)**
+
 - Code examples in docs match actual code syntax
 - Pattern names match current implementation
 - File paths referenced in docs exist
@@ -151,6 +161,7 @@ done
 ### In Practice
 
 **Continuous monitoring:**
+
 ```bash
 # Add to pre-commit hook or CI
 #!/bin/bash
@@ -170,6 +181,7 @@ pytest --collect-only --quiet
 ```
 
 **Manual review checklist (per PR):**
+
 - [ ] Updated documentation for all changed code
 - [ ] All new docs linked from CLAUDE.md
 - [ ] Code examples tested against current code
@@ -177,6 +189,7 @@ pytest --collect-only --quiet
 - [ ] No orphaned docs (deleted code → deleted docs)
 
 **Drift remediation workflow:**
+
 1. Detection tool identifies drift
 2. Categorize: code drift (code changed, docs didn't) or doc drift (docs changed, code didn't)
 3. Fix: Either update code or update docs
@@ -184,6 +197,7 @@ pytest --collect-only --quiet
 5. Commit: "Fix spec drift in [component]"
 
 **Example findings:**
+
 ```
 Broken link: L1/testing.md references L3/deprecated-mocking.md (deleted)
 → Action: Remove reference, link to current L3/mocking.md
@@ -226,6 +240,7 @@ This is the practical application of [Pattern 0.9](L0-foundation.md#pattern-09--
 ### In Practice
 
 **Audit checklist (quarterly or per major change):**
+
 - [ ] README explains the project in under 30 seconds
 - [ ] Quick start runs without reading beyond README
 - [ ] CLAUDE.md is a clear map, not a wall of links
@@ -277,21 +292,25 @@ A team doesn't "arrive" at a stage — different parts of the codebase may be at
 **Key metric categories:**
 
 **1. Velocity**
+
 - Agent-driven cycle time per feature (from task assignment to verified completion)
 - Task decomposition accuracy — how often the plan survives first execution without revision
 - Stack test pass rate on first run ([L1](L1-feedback-loops.md))
 
 **2. Quality**
+
 - Defect rate in agent-delivered code (bugs found after merge per feature)
 - Test coverage trend (stack tests covering new user journeys)
 - Architectural coherence — frequency of cross-cutting refactors needed to maintain module boundaries
 
 **3. Agent autonomy**
+
 - Human intervention rate — how often a human must redirect or correct an agent mid-task
 - Task completion without handoff — percentage of tasks completed in a single agent session
 - Review rejection rate — percentage of agent PRs requiring significant revision
 
 **4. Governance**
+
 - Constitutional rule violations caught by guardrails vs. caught in review
 - Spec drift detected — broken links, stale docs, orphaned tests — tracked over time via [Pattern 4.2](#pattern-42--spec-drift-detection)
 - Rollback frequency — how often agent changes must be reverted
@@ -320,6 +339,7 @@ Starter set (one per category):
 **Closing the loop:**
 
 Metrics that don't drive action are waste. For each metric, define:
+
 - **Threshold:** What value triggers concern? (e.g., human intervention rate above 30%)
 - **Action:** What do you do when the threshold is hit? (e.g., invest in better task scoping)
 - **Owner:** Who is responsible for acting on it?
@@ -353,6 +373,7 @@ Each stage has observable gates — not arbitrary timelines:
 Adopt this checklist for code reviews, PR reviews, and task completion verification. A PR should not merge until all applicable items pass.
 
 ### Constitutional Compliance
+
 - [ ] CLAUDE.md rules followed (if applicable)
 - [ ] No hardcoded paths or secrets
 - [ ] No blocking I/O without timeout
@@ -360,12 +381,14 @@ Adopt this checklist for code reviews, PR reviews, and task completion verificat
 - [ ] Logs include sufficient context
 
 ### Full-Loop Coverage
+
 - [ ] Primary assertions: User-facing behavior verified (e.g., order placed successfully)
 - [ ] Secondary assertions: Downstream effects verified (e.g., inventory updated, notification sent)
 - [ ] Tertiary assertions: Cross-functional verification (e.g., audit log written, email received)
 - [ ] Failure cases tested (error paths, edge cases, invalid input)
 
 ### Test Integrity
+
 - [ ] No conditional assertions (assert inside if/else)
 - [ ] No catch-without-throw (except re-throw scenarios)
 - [ ] Tests are deterministic (no flaky randomness)
@@ -375,6 +398,7 @@ Adopt this checklist for code reviews, PR reviews, and task completion verificat
 - [ ] Stack tests cover user journeys end-to-end ([L1: Stack Tests](L1-feedback-loops.md))
 
 ### Documentation
+
 - [ ] Code changes documented in same task
 - [ ] CLAUDE.md updated if structure changed
 - [ ] New docs linked from CLAUDE.md (no orphans)
@@ -382,6 +406,7 @@ Adopt this checklist for code reviews, PR reviews, and task completion verificat
 - [ ] Deprecated features marked as such
 
 ### Evidence Requirements
+
 - [ ] Claims backed by command output
 - [ ] Test results shown (not just "tests pass")
 - [ ] Before/after evidence for bug fixes
@@ -389,6 +414,7 @@ Adopt this checklist for code reviews, PR reviews, and task completion verificat
 - [ ] Negative claims include investigation
 
 ### Code Quality
+
 - [ ] Unused imports removed
 - [ ] Dead code removed
 - [ ] Stale comments removed
@@ -396,6 +422,7 @@ Adopt this checklist for code reviews, PR reviews, and task completion verificat
 - [ ] No TODO comments without tickets
 
 ### Spec Consistency
+
 - [ ] Docs match current code behavior
 - [ ] Tests reference existing functions
 - [ ] No broken links in documentation

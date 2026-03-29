@@ -15,12 +15,14 @@ Use this catalog when agents encounter friction. Match the symptom, apply the pa
 **Why This Happens**: Without an explicit boundary, files accumulate responsibility. Each addition is small; the aggregate is a file no agent can hold in context. Edits become unreliable because changing one concern risks the others, and the coupling is invisible until something breaks.
 
 **Pattern**: Apply [Pattern 0.1 - Deep Modules](../L0-foundation.md#pattern-01--deep-modules):
+
 - Export 3-5 functions maximum per module
 - Put complex logic behind a simple facade
 - Split by domain concern
 - Let tests specify behavior, not implementation
 
 Example refactor:
+
 ```
 Before: ecommerce/order-service.ts (2000 lines, 25 exports)
 After:  ecommerce/orders/index.ts (3 exports)
@@ -37,12 +39,14 @@ After:  ecommerce/orders/index.ts (3 exports)
 **Why This Happens**: Flat structures emerge when files are added one at a time without pausing to group them. Once the directory is large enough, nobody wants to reorganize it. Meanwhile, agents lose the navigation hints that paths provide - they must read every file to understand relationships.
 
 **Pattern**: Apply [Pattern 0.2 - Progressive Disclosure](../L0-foundation.md#pattern-02--progressive-disclosure):
+
 - Group related files into domain directories
 - Keep depth to 3-4 levels maximum
 - Each directory should have a clear single purpose
 - Use file paths as navigation hints
 
 Example refactor:
+
 ```
 Before: src/ (50 files)
 |- ecommerce_auth.ts
@@ -72,12 +76,14 @@ After: src/
 **Why This Happens**: Every important insight feels like it belongs in the file agents read first. But each line of constitution displaces context the agent needs for its actual task. Critical rules get buried in prose. The agent spends tokens reading the map instead of navigating the territory.
 
 **Pattern**: Apply [Pattern 0.4 - CLAUDE.md as Project Constitution](../L0-foundation.md#pattern-04--claude-md-as-project-constitution):
+
 - Hard limit: **150 lines maximum**
 - Link to external docs for detailed explanations
 - Keep CLAUDE.md focused on: what is this, structure, constitutional rules, doc links
 - Move tutorials, examples, and extended guides to dedicated docs
 
 Example refactor:
+
 ```
 Before: CLAUDE.md (500 lines)
 |- 50 lines: project description
@@ -106,12 +112,14 @@ Plus: docs/patterns/*.md (moved from inline)
 **Why This Happens**: Documentation grows organically - someone writes a useful doc and commits it, but never links it from the master index. Over time, docs duplicate each other as different authors explain the same thing. Agents can only discover what's linked; everything else is invisible.
 
 **Pattern**: Apply [Pattern 0.4 - CLAUDE.md as Project Constitution](../L0-foundation.md#pattern-04--claude-md-as-project-constitution):
+
 - CLAUDE.md is the master index - every doc must be reachable from it
 - Use `@filename.md` syntax to link docs
 - Run link validation to find orphans
 - Consolidate overlapping docs into single sources
 
 Example audit:
+
 ```bash
 # Find all markdown files
 find docs -name "*.md"
@@ -134,11 +142,13 @@ grep -r "filename.md" docs/CLAUDE.md
 **Why This Happens**: Working on main is the path of least resistance when you start. But it means broken work affects everyone, experiments have no clean rollback, and parallel agents collide on the same working directory.
 
 **Pattern**: Apply [Pattern 0.6 - Git Worktree-Based Development](../L0-foundation.md#pattern-06--git-worktree-based-development):
+
 - Use git worktrees as default working model
 - Each task or feature branch gets its own working directory
 - Convention: `.worktrees/<branch-name>/` directory
 
 Example workflow:
+
 ```bash
 # Create worktree for feature
 git worktree add .worktrees/feature-x feature-x
@@ -162,11 +172,13 @@ git worktree remove .worktrees/feature-x
 **Why This Happens**: Partial-stack tests feel like a reasonable compromise - faster than full stack, more realistic than mocks. In practice they deliver the worst of both: slow tests that still miss integration failures. Mock mismatches create false signals the agent cannot diagnose.
 
 **Pattern**: Apply [Pattern 1.1 - Stack Tests](../L1-feedback-loops.md#pattern-11--stack-tests):
+
 - Test at unit level (fast, isolated) OR stack level (complete, real)
 - Stack tests run the complete Docker stack
 - No middle ground - either test behavior (unit) or system (stack)
 
 Example refactor:
+
 ```
 Before: Integration test (3 services, 2 mocked)
 |- App container (real)
@@ -195,11 +207,13 @@ After 2: Stack test (seconds, complete confidence)
 **Why This Happens**: Mocks start as a convenience - faster setup, deterministic results. But mocks drift from reality as real services evolve. The test suite gains false confidence: green tests, broken system. Real edge cases (timeouts, unexpected error formats, connection drops) never appear.
 
 **Pattern**: Apply [Pattern 1.5 - No-Mock Philosophy](../L1-feedback-loops.md#pattern-15--no-mock-philosophy):
+
 - If you own it, run it - real PostgreSQL, real Redis, real services
 - Only mock external services you genuinely cannot run (and no testnet exists)
 - Use Docker for owned services - free, fast, realistic
 
 Example refactor:
+
 ```typescript
 // Before: Mocked database
 const mockDb = {
@@ -223,11 +237,13 @@ await db.migrate();
 **Why This Happens**: Conditional assertions often start as a workaround for flaky data - "sometimes the response is undefined, so guard against it." But a test that silently passes when it should fail is worse than no test. The agent trusts the green suite and ships broken code.
 
 **Pattern**: Apply [Pattern 1.6 - Test Integrity Rules](../L1-feedback-loops.md#pattern-16--test-integrity-rules):
+
 - Every assertion must run unconditionally
 - Tests must either pass or fail explicitly
 - Fail fast on first error
 
 Example refactor:
+
 ```typescript
 // Conditional assertion - silently passes when response is undefined
 if (response) {
@@ -248,11 +264,13 @@ expect(response.status).toBe(200);
 **Why This Happens**: Hardcoded ports work fine when only one test runs at a time. But the moment tests run concurrently - or a developer already has PostgreSQL running locally - collisions surface as flaky failures that waste diagnostic time.
 
 **Pattern**: Apply [Pattern 1.4 - Container Isolation](../L1-feedback-loops.md#pattern-14--container-isolation):
+
 - Dynamic port allocation from range (10000-65535)
 - Verify ports are available before assigning
 - Unique container names with test name + PID + random
 
 Example refactor:
+
 ```typescript
 // Before: Hardcoded ports
 services:
@@ -283,11 +301,13 @@ services:
 **Why This Happens**: Running individual tests feels incomplete - "what if it passes alone but fails in the suite?" This caution becomes counterproductive. Stack tests are vertical slices (like agile user stories) - running a single slice is the natural unit of development feedback.
 
 **Pattern**: Apply [Pattern 1.3 - Sequential/Additive Test Design](../L1-feedback-loops.md#pattern-13--sequential--additive-test-design):
+
 - Run individual stack tests during active feature development for fast iteration
 - Run the full suite before marking work complete or merging
 - A test that passes in isolation but fails in the suite reveals a dependency bug - valuable signal, not a reason to avoid individual runs
 
 Example workflow:
+
 ```bash
 # During development: run the relevant slice
 npm test -- ecommerce-basic.stack.test.ts
@@ -312,12 +332,14 @@ npm test -- tests/stack/
 **Why This Happens**: Writing a rule feels like enforcing it. But prose rules are unreliable - agents drop them between phases of work, especially under complex prompts. Without tool-layer enforcement, rules are suggestions that erode under pressure.
 
 **Pattern**: Apply [Pattern 2.1 - Skill Overlay Architecture](../L2-behavioral-guardrails.md#pattern-21--skill-overlay-architecture):
+
 - Encapsulate rules in skills
 - Skills enforce rules automatically when activated
 - Hooks block violations at tool layer
 - Constitutional rules are hardcoded, not soft suggestions
 
 Example refactor:
+
 ```
 Before: Rule in CLAUDE.md
 "Never mock database drivers in tests"
@@ -339,11 +361,13 @@ tdd+ skill:
 **Why This Happens**: Skipping steps feels faster. But each link in the skill chain enforces a guardrail - skip TDD and code ships without tests; skip verification and claims go unverified; skip review and constitutional rules go unchecked.
 
 **Pattern**: Apply [Pattern 2.2 - The Skill Chain](../L2-behavioral-guardrails.md#pattern-22--the-skill-chain):
+
 - Complete chain: brain+ -> plan+ -> tdd+ -> verify+ -> review+
 - Each skill validates input and produces structured output for next
 - Every link catches what the previous link cannot
 
 Example workflow:
+
 ```
 brain+ -> plan+ -> tdd+ -> verify+ -> review+
 - brain+: Design with stack testing considerations
@@ -362,11 +386,13 @@ brain+ -> plan+ -> tdd+ -> verify+ -> review+
 **Why This Happens**: Advisory hooks feel safer - "we'll log it and let them decide." But agents treat warnings as noise. If a rule is important enough to hook, it's important enough to enforce. An advisory hook is a rule that's been written down and then abandoned.
 
 **Pattern**: Apply [Pattern 2.3 - Hook Automation](../L2-behavioral-guardrails.md#pattern-23--hook-automation):
+
 - Hooks should either allow, advise with clear action, or block
 - Critical rules must block, not warn
 - Clear narrow purposes with documented behavior
 
 Example refactor:
+
 ```typescript
 // Advisory: Warning only (agent ignores it)
 hook.on('PreToolUse', (tool, args) => {
@@ -398,12 +424,14 @@ hook.on('PreToolUse', (tool, args) => {
 **Why This Happens**: grep is familiar and always available. Reaching for it is muscle memory. But when the repository is indexed by a tool like jcodemunch, raw grep costs 80% more tokens for the same information - and misses symbols that match text patterns inexactly.
 
 **Pattern**: Apply [Pattern 3.1 - Smart Routing](../L3-optimization.md#pattern-31--smart-routing--tool-selection):
+
 - Route to structured search when available
 - Use `search_symbols` for typed results
 - Use `search_text` for content search
 - Raw grep only when repository is not indexed
 
 Example refactor:
+
 ```bash
 # Raw grep (200 lines of unstructured text)
 grep -r "export.*function" src/
@@ -421,12 +449,14 @@ search_symbols(query="function", kind="function")
 **Why This Happens**: Reading the whole file feels thorough. But context window space is finite - every irrelevant line displaces something useful. With large codebases, this scales into a real constraint on what the agent can reason about simultaneously.
 
 **Pattern**: Apply [Pattern 3.2 - Intent Classification](../L3-optimization.md#pattern-32--intent-classification):
+
 - Use targeted reads with line ranges
 - Use `get_symbol` to extract specific functions
 - Use `get_file_outline` to see structure before reading
 - Scope exploration before diving in
 
 Example refactor:
+
 ```bash
 # Read entire file (300 lines, most irrelevant)
 Read src/ecommerce/orders/execute.ts
@@ -447,12 +477,14 @@ get_file_outline(file_path="src/ecommerce/orders/execute.ts")
 **Why This Happens**: Without environment detection, the agent defaults to the lowest common denominator. It has no way to know that better tools are available unless someone tells it - and that knowledge does not persist between sessions.
 
 **Pattern**: Apply [Pattern 3.3 - Environment-Aware Routing](../L3-optimization.md#pattern-33--environment-aware-routing):
+
 - Detect available tools before routing
 - Use RTK when installed for git operations
 - Use jcodemunch when repository is indexed
 - Degrade gracefully when specialized tools are missing
 
 Example refactor:
+
 ```typescript
 // Default routing (misses optimization opportunities)
 function searchCode(query: string) {
@@ -479,11 +511,13 @@ async function searchCode(query: string) {
 **Why This Happens**: "I'll update the docs later" is the most natural deferral in software development. The feature is done, the tests pass, the PR is ready - docs feel like a follow-up task. But "later" rarely arrives, and each deferred update compounds into spec drift that misleads every agent and new contributor who reads the stale docs.
 
 **Pattern**: Apply [Pattern 0.7 - Documentation as System Map](../L0-foundation.md#pattern-07--documentation-as-system-map):
+
 - Code changes and doc updates happen in the SAME task
 - Every behavior change requires immediate doc update
 - Link validation catches orphans
 
 Example workflow:
+
 ```
 Task: Refactor authentication flow
 
@@ -503,11 +537,13 @@ Task: Refactor authentication flow
 **Why This Happens**: Under time pressure, it's tempting to triage errors by apparent relevance. But agents process feedback systematically - they cannot distinguish between tolerated errors and real regressions. A tolerated defect today becomes an undiagnosed regression tomorrow, compounding until the feedback loop breaks entirely.
 
 **Pattern**: Apply [Pattern 2.5 - Zero-Defect Tolerance](../L2-behavioral-guardrails.md#pattern-25--zero-defect-tolerance):
+
 - Every error, warning, and failure must be addressed
 - "Pre-existing" means fix it now
 - Establish a clean baseline before starting work
 
 Example workflow:
+
 ```bash
 # Agent encounters a failure
 npm test
@@ -531,11 +567,13 @@ npm test
 **Why This Happens**: Keeping code around feels safer than deleting it - "we might need it." But dead code is noise that consumes context window, confuses agents about what's actually in use, and creates maintenance burden on code that never runs. Git history is the archive; the working tree should contain only what's alive.
 
 **Pattern**: Apply [Pattern 0.8 - Aggressive Cleanup](../L0-foundation.md#pattern-08--aggressive-cleanup):
+
 - Delete dead code immediately
 - Git history is your reference if you need it later
 - Remove commented-out code, unused imports, stale variables and functions
 
 Example refactor:
+
 ```typescript
 // Before: Dead code retained
 // TODO: Re-enable this feature later
