@@ -9,6 +9,7 @@ Prose instructions are insufficient for agentic development. Skills and hooks en
 L1 established testing discipline. L2 automates enforcement of that discipline through behavioral guardrails. These guardrails operate at the tool layer rather than the instruction layer, ensuring consistent behavior regardless of context or prompt complexity.
 
 The guardrail framework consists of:
+
 - **Skills**: Overlay patterns that extend base agent capabilities with project-specific rules
 - **Hooks**: Automated triggers that block, advise, or transform operations
 - **Constitutional rules**: Hard constraints that never relax
@@ -39,6 +40,7 @@ base capability (e.g., superpowers:test-driven-development)
 The overlay architecture works with **any structured skill set**, not just Claude Code's built-in capabilities. OpenSpec, custom agent frameworks, or any system that drives agent behavior through declarative configuration can be wrapped and extended with project-specific rules. The examples in this repo reference superpowers because it's the framework in active use, but the pattern is universal: identify the base skill, then overlay project constraints.
 
 A skill is a markdown file that declares:
+
 - **Frontmatter**: name, description, base reference
 - **Purpose**: what this skill achieves
 - **Rules**: project-specific constraints this skill enforces
@@ -51,6 +53,7 @@ Skills are the mechanism by which a project's constitution (@L0-foundation.md#pa
 ### In Practice
 
 A TDD skill for an ecommerce project might extend `superpowers:test-driven-development` and add:
+
 - No mocking database drivers (constitutional rule)
 - No mocking payment processor libraries (Stripe, PayPal) (constitutional rule)
 - Full-loop assertion requirements (project convention)
@@ -101,6 +104,7 @@ The chain enforces a complete development lifecycle. Each skill validates its in
 ### In Practice
 
 A typical workflow session:
+
 1. Agent activates `brain+` skill, designs feature with stack testing considerations
 2. Agent activates `plan+` skill, produces plan with test coverage matrix
 3. Agent activates `tdd+` skill, implements following RED-GREEN-REFACTOR
@@ -148,21 +152,25 @@ Hooks are automated triggers that fire before or after tool operations. They enf
 **Three hook types:**
 
 **PostToolUse hooks**: Fire after a tool completes. Examples:
+
 - Track source file edits in `pending-tests.json`
 - Emit "TEST TASK REQUIRED" when code changes without corresponding test changes
 - Add modified files to a change-set for review
 
 **PreToolUse hooks**: Fire before a tool executes. Examples:
+
 - Block `sed -i` (always redirect to Edit tool)
 - Block `docker system prune` in shared environments
 - Require confirmation before deleting files matching a pattern
 
 **Context-aware hooks**: Detect environment state and adjust behavior. Examples:
+
 - If `./test-logs/` has files modified within 5 minutes, block `docker logs` and redirect to log files
 - If pending tests exist, block implementation tasks until test task is created
 - If working in a git worktree, ensure commands respect worktree boundaries
 
 **The automation pattern:**
+
 ```
 hook fires
     +-> check state (what files changed? what's on disk? what's the context?)
@@ -174,6 +182,7 @@ hook fires
 ### In Practice
 
 A PostToolUse hook tracking test coverage:
+
 ```typescript
 // Simplified pseudocode
 hook.on('PostToolUse', (tool, args) => {
@@ -188,6 +197,7 @@ hook.on('PostToolUse', (tool, args) => {
 ```
 
 A PreToolUse hook blocking destructive operations:
+
 ```typescript
 hook.on('PreToolUse', (tool, args) => {
   if (tool === 'Bash' && args.command.includes('sed -i')) {
@@ -197,6 +207,7 @@ hook.on('PreToolUse', (tool, args) => {
 ```
 
 A context-aware hook:
+
 ```typescript
 hook.on('PreToolUse', (tool, args) => {
   if (tool === 'Bash' && args.command.startsWith('docker logs')) {
@@ -240,6 +251,7 @@ Constitutional rules are hard constraints declared in CLAUDE.md that never relax
 - **No conditional test assertions** — tests must be able to fail. (@L1-feedback-loops.md#pattern-16-test-integrity-rules)
 
 **The rules flow:**
+
 ```
 CLAUDE.md declares constitutional rules
     +-> plan+ includes rules in plan template (what must this plan respect?)
@@ -250,6 +262,7 @@ CLAUDE.md declares constitutional rules
 ### In Practice
 
 Constitutional rule enforcement in the skill chain:
+
 1. **plan+** reads CLAUDE.md and adds a "Constitutional compliance" section to each plan
 2. **tdd+** checks that proposed tests don't mock protected components
 3. **review+** runs a checklist that includes "No constitutional rules violated"
@@ -278,6 +291,7 @@ Agents don't have intuition to work around known issues. When developers tolerat
 Zero-defect tolerance: every error, warning, and failure must be addressed. Not just "relevant" errors—ALL of them. This applies to both unit tests and stack tests — dismissing a unit test failure while trusting stack test results means relying on partial feedback.
 
 **What zero-defect means:**
+
 - "This failure is unrelated" is never acceptable
 - "This warning was pre-existing" means fix it now
 - Tests that fail for any reason must either pass or be explicitly skipped with documentation
@@ -290,6 +304,7 @@ Agents process feedback systematically. When output contains errors, agents must
 ### In Practice
 
 A test run produces output:
+
 ```
 FAIL test/ecommerce/order.test.ts
   Order processing
@@ -302,12 +317,14 @@ Error: Cannot find module './utils/config.ts'
 ```
 
 Zero-defect response:
+
 1. Fix the missing module import first
 2. Re-run tests
 3. If the order processing test still fails, investigate that
 4. Only when ALL errors and warnings are resolved is the task complete
 
 Not zero-defect (wrong approach):
+
 1. "The module error is unrelated to the order test"
 2. Focus only on the order test failure
 3. Leave the module error unfixed
@@ -339,4 +356,3 @@ The skill chain's brain+ → plan+ phase operationalizes this insight. Fleshing 
 ---
 
 **Previous:** [L1: Closed Loop Design and Verification](L1-feedback-loops.md) | **Next:** [L3: Optimization — Token Efficiency & Agent Performance](L3-optimization.md) | [Back to Overview](../README.md)
-

@@ -9,6 +9,7 @@ Your codebase is the biggest influence on AI's output. Structure it so an AI wit
 **Solution**: A deep module has a simple interface with lots of implementation hidden behind it. The AI sees the seam — a clean, small set of exports — and delegates implementation details to the interior. Based on John Ousterhout's "A Philosophy of Software Design" and Matt Pocock's graybox module concept: modules where tests lock down behavior, the public interface is carefully controlled, and the interior is delegatable to AI.
 
 **In Practice**:
+
 - Export 3-5 functions maximum per module
 - Put complex logic behind a simple facade
 - Let tests specify behavior, not implementation
@@ -58,6 +59,7 @@ export function parseAddress(...) { }               // internal
 **Solution**: Directory structure mirrors mental models. AI discovers complexity gradually: README → CLAUDE.md → module interfaces → implementation. Each layer gives enough context to decide whether to go deeper.
 
 **In Practice**:
+
 - Put entry points at the root: `README.md`, `CLAUDE.md`
 - Group related files into directories by domain
 - Keep depth to 3-4 levels maximum
@@ -110,6 +112,7 @@ project/
 **Solution**: Group by domain or capability. AI uses file paths as navigation hints. Co-locate related code by what it does, not what language construct it uses.
 
 **In Practice**:
+
 - `ecommerce/fulfillment/` not `services/fulfillment/`
 - `ecommerce/types.ts` inside the domain, not a global `types/` dir
 - One domain per directory, cross-cutting concerns at root level
@@ -164,6 +167,7 @@ src/
 **Solution**: CLAUDE.md is the single source of truth — a contract, not a tutorial. It answers the essential questions in one place. Hard limit: **150 lines maximum**. Beyond that, link to external docs.
 
 **In Practice**:
+
 ```markdown
 # Project — Agent Contract
 
@@ -250,6 +254,7 @@ git worktree remove .worktrees/feature-x
 ```
 
 Benefits:
+
 - **Parallel isolation**: Multiple agents on separate branches without conflict
 - **Clean slate**: No leftover artifacts from previous sessions
 - **Non-destructive**: Experiment without risking the main branch
@@ -272,6 +277,7 @@ Convention: `.worktrees/<branch-name>/` directory.
 The CLAUDE.md master index pattern (from [Pattern 0.4](#pattern-04--claude-md-as-project-constitution)) is the enforcement mechanism: documentation not linked from CLAUDE.md is orphaned and therefore dead. Link validation is part of keeping the map current.
 
 **Key principles:**
+
 - **Synchronous updates:** Code changes and doc updates happen in the same task
 - **Reference integrity:** All docs must be reachable from CLAUDE.md via link chains
 - **Version-aware docs:** When patterns evolve, mark old versions as deprecated and link to current ones
@@ -280,17 +286,20 @@ The CLAUDE.md master index pattern (from [Pattern 0.4](#pattern-04--claude-md-as
 **In Practice**:
 
 **Before starting a task:**
+
 1. Read the relevant documentation sections
 2. Verify the examples match current code
 3. If docs are stale, flag it before proceeding
 
 **During implementation:**
+
 1. Make code changes
 2. IMMEDIATELY update affected docs
 3. Update CLAUDE.md links if structure changed
 4. Run link validation to catch orphans
 
 **Example task flow:**
+
 ```
 Task: Refactor authentication flow
 
@@ -303,6 +312,7 @@ Task: Refactor authentication flow
 ```
 
 **Never defer:**
+
 - "I'll update the docs in a separate PR"
 - "The docs are close enough for now"
 - "I'll document this when the feature is complete"
@@ -320,6 +330,7 @@ Task: Refactor authentication flow
 **Solution**: **Treat cleanup as a continuous practice, not a quarterly sprint.** When you find dead code during a task, remove it as part of that task. Every task should leave the codebase cleaner than it found it.
 
 **Cleanup scope:**
+
 - **Unused imports:** Remove imports that aren't referenced
 - **Dead code:** Remove functions, classes, and methods that aren't called
 - **Stale comments:** Remove comments that duplicate the code or are outdated
@@ -328,6 +339,7 @@ Task: Refactor authentication flow
 - **Debug code:** Remove print statements, debug logging, temporary files
 
 **Detection tools:**
+
 ```bash
 # Unused imports (Python)
 $ ruff check --select F401
@@ -345,6 +357,7 @@ $ grep -r "deprecated" --include="*.py"
 **In Practice**:
 
 **During any task:**
+
 1. Use the relevant file
 2. Notice dead code nearby
 3. Remove it as part of the same commit
@@ -352,6 +365,7 @@ $ grep -r "deprecated" --include="*.py"
 5. Note the cleanup in commit message
 
 **Example:**
+
 ```
 Task: Fix authentication bug
 
@@ -364,6 +378,7 @@ Task: Fix authentication bug
 ```
 
 **Targeted cleanup sessions:**
+
 ```bash
 # Find and remove unused imports
 $ ruff check --select F401 --fix .
@@ -377,6 +392,7 @@ $ find . -name "*.py" -mtime +730 -ls
 ```
 
 **Commit message pattern:**
+
 ```
 [Primary task description]
 
@@ -399,6 +415,7 @@ Cleanup:
 **Solution**: If someone with zero context cannot understand your project from CLAUDE.md + README + file structure alone, the project is not agentic-ready. Every assumption not codified in these entry points creates friction for AI agents.
 
 **In Practice**:
+
 - Test by asking: "Would a new developer understand this from README alone?"
 - Put answers in CLAUDE.md, not tribal knowledge
 - Let file structure tell the story

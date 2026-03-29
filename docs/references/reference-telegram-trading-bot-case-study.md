@@ -104,6 +104,7 @@ this.projectFullName = `${prefix}-${testName}-${processId}-${randomSuffix}`;
 ```
 
 Key features:
+
 - **Unique container names** — No collision between concurrent test runs
 - **Dynamic port allocation** — Via `PortAllocator` class (10000-65535 range)
 - **Per-test compose files** — `docker-compose-stack-{test-name}-{pid}-{random}-{timestamp}.yml`
@@ -240,6 +241,7 @@ If `app-startup-dependencies` fails, agents know: don't debug trading logic — 
 Constitutional mandate #1: "No Mock System Components"
 
 Stack tests use:
+
 - **Real PostgreSQL/TimescaleDB** — Run in Docker containers
 - **Real Redis** — Run in Docker containers
 - **Real testnet blockchains** — Ethereum Sepolia for transaction verification
@@ -262,6 +264,7 @@ Trading stack tests demonstrate the most rigorous end-to-end assertion pattern i
 For a simple transfer, `verifyTransactionEmail()` checks chain details, recipient address, amount, and token symbol. For a limit order executing through the 4-stage pipeline (TRIGGER → OPEN → MANAGE → CLOSE), each stage transition is verified: order moves from PENDING through MONITORING, TRIGGERED, EXECUTING to FILLED, with dependent strategies (stop-loss, take-profit) created and linked via `dependsOnStrategy` relationships.
 
 The limit order test verifies across all four stages:
+
 - Stage 1 (TRIGGER): Order created, price data collection begins
 - Stage 2 (OPEN): Price injected to trigger threshold, DEX swap executes
 - Stage 3 (MANAGE): Dependent strategies created with correct `dependsOnStrategy` links, waiting state verified
@@ -319,6 +322,7 @@ The chain enforces a complete development lifecycle: design → plan → impleme
 `test-integrity/SKILL.md` enforces zero-escape-hatch policy:
 
 **Forbidden patterns:**
+
 - Conditional assertions (`if (response) { expect(...) }`)
 - Catch without rethrow
 - Optional chaining on assertions (`expect(res?.data)`)
@@ -495,4 +499,3 @@ February 2026 was the busiest period: 629 non-merge commits across 17 active day
 5. **Security is a significant concern** — 8.6% SECURITY commits reflect continuous attention to security in a financial application handling real funds and blockchain transactions. This is a domain-specific requirement that compounds with the zero-defect tolerance pattern.
 
 6. **CHORE commits reveal infrastructure investment** — 17.2% CHORE commits cover Docker configuration, dependency management, CI pipeline setup, and environment configuration. This overhead is the cost of running a full Docker stack for every test — the investment that makes stack tests possible.
-

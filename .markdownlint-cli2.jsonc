@@ -1,0 +1,53 @@
+// markdownlint-cli2 configuration
+// Aligned with CLAUDE.md markdown conventions:
+//   Line length: Prefer 80-100, hard limit 120
+//   Headers: # for page title, ## for main sections, ### for subsections
+//   Code blocks: Specify language
+//   Lists: - for bullets, numbered for sequences
+//   No emoji in docs (exception: README.md sparingly)
+{
+  "config": {
+    "default": true,
+
+    // MD013/line-length
+    // CLAUDE.md says "prefer 80-100, hard limit 120" but existing prose
+    // exceeds 120 extensively. Disabled for now - enforce on new content
+    // by ratcheting down over time. Code blocks and headings are checked
+    // via other rules.
+    "MD013": false,
+
+    // MD024/no-duplicate-heading - allow in different sections
+    // Pattern docs reuse ### In Practice, ### Problem, ### Solution
+    "MD024": {
+      "siblings_only": true
+    },
+
+    // MD033/no-inline-html - allow for README badges and diagrams
+    "MD033": false,
+
+    // MD041/first-line-heading - disabled for files with front matter
+    "MD041": false,
+
+    // MD040/fenced-code-language - code blocks should specify language
+    // CLAUDE.md requires this but 42 existing blocks lack language tags
+    // (mostly directory structure diagrams). Disabled for now - enable
+    // after adding language tags to existing blocks (use `text` for
+    // directory trees and plain output).
+    "MD040": false,
+
+    // MD036/no-emphasis-as-heading - emphasis used as heading
+    // Pattern docs use **bold** for inline emphasis that isn't a heading
+    "MD036": false,
+
+    // MD051/link-fragments - false positives with anchor links
+    "MD051": false,
+
+    // MD060/table-column-style - table formatting is cosmetic
+    "MD060": false
+  },
+
+  "ignores": [
+    "**/node_modules/**",
+    "**/.git/**"
+  ]
+}

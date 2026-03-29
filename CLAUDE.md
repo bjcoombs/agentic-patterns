@@ -32,20 +32,24 @@ See @README.md for detailed project overview.
 ## Writing Rules for This Repository
 
 **When writing docs:**
+
 - Language must be precise. No filler ("basically", "just", "simply").
 - No vague requirements ("make it fast", "clean it up").
 - Every claim must be specific and verifiable.
 
 **When writing examples:**
+
 - Working code only. No TODOs, no placeholders.
 - All examples must run as-is.
 - TypeScript and Python versions for each pattern.
 
 **Doc freshness:**
+
 - If you modify code in `examples/`, update the corresponding `docs/` file in the same session.
 - Code changes without doc updates are incomplete work.
 
 **Master index requirement:**
+
 - Every doc in this repo must be reachable from CLAUDE.md (this file).
 - This is the entry point — agents discover all project docs from here.
 
@@ -61,18 +65,23 @@ See @README.md for detailed project overview.
 ## Level Documentation
 
 **Foundation:**
+
 - @docs/L0-foundation.md — Deep modules, progressive disclosure, CLAUDE.md patterns
 
 **Closed Loop Design and Verification:**
+
 - @docs/L1-feedback-loops.md — Context harvesting, stack tests, full-loop assertions, sequential design
 
 **Behavioral Guardrails:**
+
 - @docs/L2-behavioral-guardrails.md — Skills, hooks, constitutional rules
 
 **Optimization:**
+
 - @docs/L3-optimization.md — Token efficiency, smart routing, guardrail middleware
 
 **Standards & Measurement:**
+
 - @docs/L4-standards-measurement.md — Evidence-based claims, drift detection, metrics
 
 ## Cross-Cutting Guides

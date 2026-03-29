@@ -73,6 +73,7 @@ docs/references/    # Case study and further reading
 ## Contributing
 
 This is a living pattern library. Contributions welcome:
+
 - **New patterns** that extend or challenge the existing framework
 - **Real-world examples** from different domains (the current examples lean toward ecommerce and trading)
 - **Corrections** when a pattern doesn't match your experience — document the exception

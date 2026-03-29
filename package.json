@@ -1,0 +1,12 @@
+{
+  "private": true,
+  "name": "agentic-patterns",
+  "description": "CI tooling for agentic-patterns documentation",
+  "scripts": {
+    "lint:md": "markdownlint-cli2 '**/*.md'",
+    "lint:md:fix": "markdownlint-cli2 --fix '**/*.md'"
+  },
+  "devDependencies": {
+    "markdownlint-cli2": "^0.22.0"
+  }
+}

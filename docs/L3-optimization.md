@@ -52,6 +52,7 @@ Route commands to the most efficient tool based on intent detection. Maintain a 
 ```
 
 When the agent attempts `grep -r "function" src/`, the middleware:
+
 1. Detects the `grep` intent
 2. Checks available tools (RTK? jcodemunch?)
 3. Returns an `advise` resolution pointing to the best tool
@@ -154,12 +155,14 @@ Optimal tools vary by environment. A project indexed by jcodemunch should use `s
 Detect available tools at session start and cache results. Route commands based on what's actually available. Gracefully degrade when specialized tools are missing.
 
 **Detection Checklist:**
+
 - **RTK**: Run `which rtk` and check exit code
 - **jcodemunch**: Check for `.jcodemunch/` directory in project root
 - **Stack test context**: Check `./test-logs/` for files modified within 5 minutes
 - **Cache**: Store detection results for 30 minutes
 
 **Priority Resolution:**
+
 1. Specialized tool (RTK/jcodemunch) → use it
 2. General tool (Grep/Read/Glob) → next best
 3. Raw command → allow, but log missed optimization
@@ -265,6 +268,7 @@ await editFile(targetFile, { replace: oldPattern, with: newPattern });
 ```
 
 Structured exploration produces:
+
 - **File tree**: 50 tokens vs 500 tokens of `find` output
 - **Symbol index**: Typed results vs grep noise
 - **Decision quality**: Agent knows where things are
@@ -370,17 +374,20 @@ This doesn't mean monorepos are wrong. It means the cost-benefit calculation has
 ### In Practice
 
 **When multi-repo with agentic alignment works well:**
+
 - Services with clearly owned domains (payments, auth, notifications)
 - Teams that want independent deploy cycles
 - Codebases where L0 progressive disclosure matters more than shared types
 - Projects where context window usage is a bottleneck
 
 **When a monorepo is still the better choice:**
+
 - Services with shared internal types that change frequently
 - Teams that lack the discipline to maintain separate CLAUDE.md files per repo
 - Projects where build tooling assumes a monorepo (turborepo, nx)
 
 **The agentic alignment workflow:**
+
 1. Each repo maintains its own CLAUDE.md with API contracts and public interfaces
 2. When a service changes its API, the agent reads dependent repos' CLAUDE.md files to identify breakage
 3. The agent proposes coordinated changes across repos based on analysis, not assumption
@@ -429,6 +436,7 @@ balances[2]{id,symbol,balance,usd}:
 The header `[2]{id,symbol,balance,usd}:` declares record count and field names once. Each row contains only values, separated by commas. Records are separated by pipes (or newlines). The savings compound with record count — 100 rows means 100 fewer repetitions of field names.
 
 **Key TOON format rules:**
+
 - Line-oriented, indentation-based syntax
 - Array length declared explicitly: `[N]`
 - Uniform object arrays use tabular format: `{field1,field2}:`
@@ -479,11 +487,13 @@ class MCPResponseFormatter {
 ```
 
 **When TOON helps (apply it):**
+
 - Uniform object arrays returned from MCP tools (orders, balances, positions, market data)
 - Responses with 5+ records and 3+ fields — savings exceed 40%
 - High-frequency endpoints called repeatedly during agent sessions
 
 **When TOON doesn't help (skip it):**
+
 - Non-tabular responses (single objects, nested heterogeneous structures)
 - Responses under 20 characters — TOON header overhead exceeds savings
 - Responses where field names vary between records
@@ -537,6 +547,7 @@ Result: 60-90% token savings, fewer errors, better outcomes.
 ## Example Implementation
 
 See [examples/guardrails](../examples/guardrails/) for a complete TypeScript implementation of:
+
 - Intent classifier ([`intent.ts`](../examples/guardrails/src/core/intent.ts))
 - Environment detector ([`environment.ts`](../examples/guardrails/src/core/environment.ts))
 - Smart router ([`router.ts`](../examples/guardrails/src/core/router.ts))
